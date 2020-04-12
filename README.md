@@ -1,8 +1,13 @@
 # Nova-Macros-Offline
 Offline version of my Stream Deck clono. Built in AHK for AHK. Touchscreen use heavily recommended.
+
+
 How to install from source:
+
 Download AutoHotkey from [here](https://www.autohotkey.com/)
+
 Extract source to "C:\ProgramData\Nova Macros"
+
 Run Nova Macros Client Offline.ahk
 
 Usage:
