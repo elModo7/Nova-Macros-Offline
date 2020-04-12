@@ -3,8 +3,8 @@
 ; Description ..: Nova Macros for local TouchScreen
 ; Script Ver ...: 2.4-offline
 ; AHK Version ..: 1.1.32.0 (Unicode 32-bit)
-; OS Version ...: Windows 10 (Previous versions tested working on Win7)
-; Language .....: English, Español - España (es-ES)
+; OS Version ...: Windows 10 (not working on Windows 7 due to resources missing)
+; Language .....: English, EspaÃ±ol - EspaÃ±a (es-ES)
 ; Author .......: elModo7 (victor_smp)
 ; Filename .....: Nova Macros Client Offline.ahk
 ; ==============================================================================
