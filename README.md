@@ -2,6 +2,8 @@
 # Nova Macros Offline
 Offline version of my Stream Deck clono. Built in AHK for AHK. 
 
+Tested on Windows 10, not working on Windows 7.
+
 Touchscreen use heavily recommended.
 
 **Installing from releases installer:**
