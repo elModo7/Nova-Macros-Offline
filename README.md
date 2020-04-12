@@ -5,7 +5,9 @@ Offline version of my Stream Deck clono. Built in AHK for AHK.
 Touchscreen use heavily recommended.
 
 **Installing from releases installer: 
+
 [AutoHotkey (Required)](https://www.autohotkey.com/)
+
 [Nova Macros Installer](https://github.com/elModo7/Nova-Macros-Offline/releases/download/2.4-Offline/Nova.Macros.Offline.Installer.exe)**
 
 **How to install from source:**
