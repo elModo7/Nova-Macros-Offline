@@ -26,5 +26,3 @@ Usage:
 
 Sample:
 ![Sample](https://i.postimg.cc/brVvCHLC/sample.jpg)
-
-[AHK Forum Post](https://www.autohotkey.com/boards/viewtopic.php?f=6&t=74562)
