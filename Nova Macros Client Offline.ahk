@@ -1,13 +1,12 @@
-; Script Information ===========================================================
-; Name .........: Nova Macros Client Offline
-; Description ..: Nova Macros for local TouchScreen
-; Script Ver ...: 2.4-offline
 ; AHK Version ..: 1.1.32.0 (Unicode 32-bit)
-; OS Version ...: Windows 10 (not working on Windows 7 due to resources missing)
-; Language .....: English, Español - España (es-ES)
-; Author .......: elModo7 (victor_smp)
-; Filename .....: Nova Macros Client Offline.ahk
-; ==============================================================================
+; OS Version ...: Windows 10 (Previous versions tested working on Win7)
+;@Ahk2Exe-SetName Nova Macros Client Offline
+;@Ahk2Exe-SetDescription Nova Macros for local TouchScreen
+;@Ahk2Exe-SetVersion 2.6-offline
+;@Ahk2Exe-SetCopyright Copyright (c) 2020`, elModo7
+;@Ahk2Exe-SetOrigFilename Nova Macros Client Offline.exe
+; INITIALIZE
+; *******************************
 #NoEnv
 #Persistent
 #SingleInstance Force
@@ -17,18 +16,20 @@ CoordMode,Mouse,Screen
 #Include, <nm_msg>
 global EsVisible = true
 global SiempreVisible, EnCarpeta, MiniClient = false
-global Variable, Valor, ValorAnterior, ProgramasRegistrados, PaginasAsociadas, BotonesDuales, CarpetaBoton, PaginaCarpeta, RutaEditorScripts, ExtensionScripts, BotonActivo, BotonAPulsar
+global Variable, Valor, ValorAnterior, ProgramasRegistrados, PaginasAsociadas, BotonesDuales, CarpetaBoton, PaginaCarpeta, RutaEditorScripts, ExtensionScripts, BotonActivo, BotonAPulsar, windowHandler
 global VariableCambioImagen = 0
 global RutaBoton1, RutaBoton2, RutaBoton3, RutaBoton4, RutaBoton5, RutaBoton6, RutaBoton7, RutaBoton8, RutaBoton9, RutaBoton10, RutaBoton11, RutaBoton12, RutaBoton13, RutaBoton14, RutaBoton15
 global EstadosBotonesDuales := []
+global feedbackEjecucion := []
 global NumeroPagina := 0
 global MsgBoxBtn1, MsgBoxBtn2, MsgBoxBtn3, MsgBoxBtn4
-global X_Inicial := 0
-global Y_Inicial := 0
-global Pantalla_Mitad_X := 960
-global Pantalla_Mitad_Y := 540
-global MoverRatonAlPulsarBoton := 0
-global ClientVersion := "2.4 Offline"
+; Nuevas variables para la config
+global X_Inicial := 905
+global Y_Inicial := 1080
+global Pantalla_Mitad_X := A_ScreenWidth / 2
+global Pantalla_Mitad_Y := A_ScreenHeight / 2
+global MoverRatonAlPulsarBoton, enviarAltTabAlPulsarBoton := 1
+global ClientVersion := "2.6 Offline"
 FileCreateDir, conf
 
 if(!FileExist("./conf/ProgramPages.txt"))
@@ -37,6 +38,7 @@ if(!FileExist("./conf/ProgramPages.txt"))
 	FileAppend, 0|3|1, ./conf/ProgramPages.txt
 }
 
+;~ Cargar Programas asociados a p�ginas
 NumeroLoop := 1
 Loop, read, ./conf/ProgramPages.txt
 {
@@ -51,7 +53,7 @@ Loop, read, ./conf/ProgramPages.txt
 	}
 	NumeroLoop++
 }
-StringSplit, ProgramasRegistrados, ProgramasRegistradosRead, |,
+StringSplit, ProgramasRegistrados, ProgramasRegistradosRead, |, ; Creo el array ProgramasRegistrados del string ProgramasRegistradosRead, separando elementos por coma, ProgramasRegistrados0 contiene el count de elementos, y ProgramasRegistrados1, ProgramasRegistrados2... son los campos del array
 StringSplit, PaginasAsociadas, PaginasAsociadasRead, |,
 global ProgramasRegistrados0
 
@@ -61,6 +63,7 @@ if(!FileExist("./conf/FolderButtons.txt"))
 	FileAppend, UtilesStream|SonidosOBS, ./conf/FolderButtons.txt
 }
 
+;~ Cargar Botones asociados a carpetas
 NumeroLoop := 1
 Loop, read, ./conf/FolderButtons.txt
 {
@@ -85,6 +88,7 @@ if(!FileExist("./conf/DualButtons.txt"))
 	FileAppend, 4Enabled|5Enabled, ./conf/DualButtons.txt
 }
 
+;~ Cargar Botones Duales
 NumeroLoop := 1
 Loop, read, ./conf/DualButtons.txt
 {
@@ -103,6 +107,7 @@ StringSplit, BotonesDuales, BotonesDualesRead, |,
 StringSplit, AccionesDualesRead, AccionesDualesRead, |,
 global BotonesDuales0
 
+; Poner los botones duales a 0
 i = 1
 while(i <= BotonesDuales0)
 {
@@ -112,6 +117,7 @@ while(i <= BotonesDuales0)
 
 if(!FileExist("./conf/ExtensionScripts.txt"))
 {
+	; Extension Scripts
 	InputBox, ExtensionScripts, Button Script EXT, Insert the extension of the Scripts triggered by the buttons`nExamples`: exe`, ahk`, py`.`.`., , 500, 145,,,,,ahk
 	if ExtensionScripts =
 		MsgBox, Couldn't retrieve the extension!
@@ -129,14 +135,26 @@ else
 	}
 }
 
+; TRAY MENU
+; *******************************
 Menu, tray, NoStandard
 Menu, tray, add, Hide, ToggleHide
 Menu, tray, add, Set Editor Path, CambiarRutaEditor
 Menu, tray, add, Mini Client, CambiarDimensionesCliente
 Menu, tray, add
 Menu, tray, add, Exit, Exit
+
+; CONTEXT MENU GENERICO
+; *******************************
 Menu ContextMenuGenerico, Add, Always on Top, SiempreVisible
 Menu ContextMenuGenerico, UnCheck, Always on Top
+Menu ContextMenuGenerico, Add, Center Mouse after Activation, MoverRatonAlPulsarBotonToggle
+Menu ContextMenuGenerico, Check, Center Mouse after Activation
+Menu ContextMenuGenerico, Add, Send Alt+Tab after Activation, enviarAltTabAlPulsarBotonToggle
+Menu ContextMenuGenerico, Check, Send Alt+Tab after Activation
+
+; CONTEXT MENU BOTONES
+; *******************************
 Menu scriptGenerator, Add, Run File, ScriptGenerator_RunFile
 Menu scriptGenerator, Icon, Run File, shell32.dll, 25
 Menu scriptGenerator, Add, Run Cmd, ScriptGenerator_RunCmd
@@ -254,11 +272,29 @@ Menu ContextMenu, Icon, Delete Folder Button, shell32.dll, 235
 Menu ContextMenu, Add, Delete Button Function, DeleteButtonFunction
 Menu ContextMenu, Icon, Delete Button Function, shell32.dll, 132
 
+; GUI
+; *******************************
 Gui, Color, 282828
-Gui -Caption +LastFound
-Gui, Add, Text, x0 y0 w1024 h50 cWhite Center GMoverVentana vMoverVentanaUp,
-Gui, Add, Text, x0 y570 w1024 h50 cWhite Center GMoverVentana vMoverVentanaDown,
-Gui Add, Picture, x0 y0 w1024 h600, C:\ProgramData\Nova Macros\resources\img\background.jpg
+Gui -Caption +LastFound +ToolWindow +HwndwindowHandler +E0x02000000 +E0x00080000
+; Fila1
+Gui Add, Picture, +BackgroundTrans gBoton1 vBoton1, C:\ProgramData\Nova Macros\resources\img\1.png
+Gui Add, Picture, +BackgroundTrans gBoton2 vBoton2, C:\ProgramData\Nova Macros\resources\img\2.png
+Gui Add, Picture, +BackgroundTrans gBoton3 vBoton3, C:\ProgramData\Nova Macros\resources\img\3.png
+Gui Add, Picture, +BackgroundTrans gBoton4 vBoton4, C:\ProgramData\Nova Macros\resources\img\4.png
+Gui Add, Picture, +BackgroundTrans gBoton5 vBoton5, C:\ProgramData\Nova Macros\resources\img\5.png
+; Fila2
+Gui Add, Picture, +BackgroundTrans gBoton6 vBoton6, C:\ProgramData\Nova Macros\resources\img\6.png
+Gui Add, Picture, +BackgroundTrans gBoton7 vBoton7, C:\ProgramData\Nova Macros\resources\img\7.png
+Gui Add, Picture, +BackgroundTrans gBoton8 vBoton8, C:\ProgramData\Nova Macros\resources\img\8.png
+Gui Add, Picture, +BackgroundTrans gBoton9 vBoton9, C:\ProgramData\Nova Macros\resources\img\9.png
+Gui Add, Picture, +BackgroundTrans gBoton10 vBoton10, C:\ProgramData\Nova Macros\resources\img\10.png
+; Fila3
+Gui Add, Picture, +BackgroundTrans gBoton11 vBoton11, C:\ProgramData\Nova Macros\resources\img\11.png
+Gui Add, Picture, +BackgroundTrans gBoton12 vBoton12, C:\ProgramData\Nova Macros\resources\img\12.png
+Gui Add, Picture, +BackgroundTrans gBoton13 vBoton13, C:\ProgramData\Nova Macros\resources\img\13.png
+Gui Add, Picture, +BackgroundTrans gBoton14 vBoton14, C:\ProgramData\Nova Macros\resources\img\14.png
+Gui Add, Picture, +BackgroundTrans gBoton15 vBoton15, C:\ProgramData\Nova Macros\resources\img\15.png
+; Fondos Activaciones Botones
 Gui Add, Picture, vActivar1 Hidden x120 y40 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
 Gui Add, Picture, vActivar2 Hidden x280 y40 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
 Gui Add, Picture, vActivar3 Hidden x440 y40 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
@@ -274,28 +310,19 @@ Gui Add, Picture, vActivar12 Hidden x280 y400 w150 h150,C:\ProgramData\Nova Macr
 Gui Add, Picture, vActivar13 Hidden x440 y400 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
 Gui Add, Picture, vActivar14 Hidden x600 y400 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
 Gui Add, Picture, vActivar15 Hidden x760 y400 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, +BackgroundTrans gBoton1 vBoton1, C:\ProgramData\Nova Macros\resources\img\1.png
-Gui Add, Picture, +BackgroundTrans gBoton2 vBoton2, C:\ProgramData\Nova Macros\resources\img\2.png
-Gui Add, Picture, +BackgroundTrans gBoton3 vBoton3, C:\ProgramData\Nova Macros\resources\img\3.png
-Gui Add, Picture, +BackgroundTrans gBoton4 vBoton4, C:\ProgramData\Nova Macros\resources\img\4.png
-Gui Add, Picture, +BackgroundTrans gBoton5 vBoton5, C:\ProgramData\Nova Macros\resources\img\5.png
-Gui Add, Picture, +BackgroundTrans gBoton6 vBoton6, C:\ProgramData\Nova Macros\resources\img\6.png
-Gui Add, Picture, +BackgroundTrans gBoton7 vBoton7, C:\ProgramData\Nova Macros\resources\img\7.png
-Gui Add, Picture, +BackgroundTrans gBoton8 vBoton8, C:\ProgramData\Nova Macros\resources\img\8.png
-Gui Add, Picture, +BackgroundTrans gBoton9 vBoton9, C:\ProgramData\Nova Macros\resources\img\9.png
-Gui Add, Picture, +BackgroundTrans gBoton10 vBoton10, C:\ProgramData\Nova Macros\resources\img\10.png
-Gui Add, Picture, +BackgroundTrans gBoton11 vBoton11, C:\ProgramData\Nova Macros\resources\img\11.png
-Gui Add, Picture, +BackgroundTrans gBoton12 vBoton12, C:\ProgramData\Nova Macros\resources\img\12.png
-Gui Add, Picture, +BackgroundTrans gBoton13 vBoton13, C:\ProgramData\Nova Macros\resources\img\13.png
-Gui Add, Picture, +BackgroundTrans gBoton14 vBoton14, C:\ProgramData\Nova Macros\resources\img\14.png
-Gui Add, Picture, +BackgroundTrans gBoton15 vBoton15, C:\ProgramData\Nova Macros\resources\img\15.png
+; Botones P�gina
 Gui Add, Picture, +BackgroundTrans gRightPage vRightPage x910 y240 w130 h130, C:\ProgramData\Nova Macros\resources\img\RightPage.png
 Gui Add, Picture, +BackgroundTrans gLeftPage vLeftPage x0 y240 w130 h130, C:\ProgramData\Nova Macros\resources\img\LeftPage.png
-
+; Fondo y secciones mover
+Gui Add, Picture, x0 y0 w1024 h600, C:\ProgramData\Nova Macros\resources\img\background.jpg
+Gui, Add, Text, x0 y0 w1024 h50 cWhite Center GMoverVentana vMoverVentanaUp, ; Mover Ventana de arriba
+Gui, Add, Text, x0 y570 w1024 h50 cWhite Center GMoverVentana vMoverVentanaDown, ; Mover Ventana de abajo
 EstablecerPagina(0)
-Gui Show, w1024 h600 x%X_Inicial% y%Y_Inicial%, Nova Macros Client
+Gui Show, w1024 h600, Nova Macros Client
 Return
 
+; LABELS BOTONES Y FUNCIONES GENERALES
+; *******************************
 Show:
 if WinExist("Nova Macros Client"){
 	WinHide, Nova Macros Client
@@ -624,7 +651,34 @@ SiempreVisible:
 	}
 return
 
+MoverRatonAlPulsarBotonToggle:
+	if(MoverRatonAlPulsarBoton)
+	{
+		MoverRatonAlPulsarBoton := 0
+		Menu ContextMenuGenerico, UnCheck, Center Mouse after Activation
+	}
+	else
+	{
+		MoverRatonAlPulsarBoton := 1
+		Menu ContextMenuGenerico, Check, Center Mouse after Activation
+	}
+return
+
+enviarAltTabAlPulsarBotonToggle:
+	if(enviarAltTabAlPulsarBoton)
+	{
+		enviarAltTabAlPulsarBoton := 0
+		Menu ContextMenuGenerico, UnCheck, Send Alt+Tab after Activation
+	}
+	else
+	{
+		enviarAltTabAlPulsarBoton := 1
+		Menu ContextMenuGenerico, Check, Send Alt+Tab after Activation
+	}
+return
+
 CambiarDimensionesCliente:
+DllCall("LockWindowUpdate", "UInt", windowHandler)
 if MiniClient
 {
 	Menu, tray, Rename, Normal Client, Mini Client
@@ -647,7 +701,7 @@ if MiniClient
 	GuiControl, MoveDraw, LeftPage, x0 y230 w130 h130
 	GuiControl, MoveDraw, RightPage, x910 y230 w130 h130
 	GuiControl, MoveDraw, MoverVentanaUp, x0 y0 w1024 h50
-	GuiControl, MoveDraw, MoverVentanaDown, x0 y450 w1024 h50
+	GuiControl, MoveDraw, MoverVentanaDown, x0 y570 w1024 h50
 	Gui Show, w1024 h600, Nova Macros Client
 }
 else
@@ -675,6 +729,7 @@ else
 	GuiControl, MoveDraw, MoverVentanaDown, x0 y187 w401 h23
 	Gui, Show, w385 h200, Nova Macros Client
 }
+DllCall("LockWindowUpdate", "UInt", 0)
 if(EnCarpeta)
 {
 	EstablecerPaginaCarpeta(CarpetaBoton, PaginaCarpeta)
@@ -754,6 +809,7 @@ PulsarBoton(BotonAPulsar)
 	if(MoverRatonAlPulsarBoton)
 		MouseMove, %Pantalla_Mitad_X%, %Pantalla_Mitad_Y%, 0
 	AltTab()
+	; Lógica Botón
 	if(EnCarpeta)
 	{
 		if(BotonAPulsar != 15)
@@ -771,6 +827,7 @@ PulsarBoton(BotonAPulsar)
 			}
 			if GetKeyState("Alt")
 			{
+				;CambiarImagenAlternativaBoton(BotonAPulsar, IdBoton)
 				return
 			}
 			if GetKeyState("Shift")
@@ -818,6 +875,7 @@ PulsarBoton(BotonAPulsar)
 		}
 		else if (BotonAPulsar = 15)
 		{
+			; Este es un caso especial ya que si está en carpeta siempre tiene el valor volver (salir fuera de la carpeta)
 			IdBoton := CarpetaBoton 15*PaginaCarpeta+BotonAPulsar
 			EstablecerPagina(NumeroPagina)
 			EnCarpeta = 0
@@ -840,6 +898,7 @@ PulsarBoton(BotonAPulsar)
 		}
 		if GetKeyState("Alt")
 		{
+			;CambiarImagenAlternativaBoton(BotonAPulsar, IdBoton)
 			return
 		}
 		if GetKeyState("Shift")
@@ -890,6 +949,7 @@ PulsarBoton(BotonAPulsar)
 
 EstablecerPagina(NumeroPagina)
 {
+	DllCall("LockWindowUpdate", "UInt", windowHandler)
 	CarpetaBoton := ""
 	RutaBoton1 := CarpetaBoton 15*NumeroPagina+1 ".png"
 	RutaBoton2 := CarpetaBoton 15*NumeroPagina+2 ".png"
@@ -915,10 +975,12 @@ EstablecerPagina(NumeroPagina)
 	{
 		RefrescarBotones()
 	}
+	DllCall("LockWindowUpdate", "UInt", 0)
 }
 
 EstablecerPaginaCarpeta(CarpetaBoton, PaginaCarpeta)
 {
+	DllCall("LockWindowUpdate", "UInt", windowHandler)
 	RutaBoton1 := CarpetaBoton 15*PaginaCarpeta+1 ".png"
 	RutaBoton2 := CarpetaBoton 15*PaginaCarpeta+2 ".png"
 	RutaBoton3 := CarpetaBoton 15*PaginaCarpeta+3 ".png"
@@ -942,12 +1004,14 @@ EstablecerPaginaCarpeta(CarpetaBoton, PaginaCarpeta)
 	{
 		RefrescarBotones(true)
 	}
+	DllCall("LockWindowUpdate", "UInt", 0)
 }
 
 RefrescarBotones(esCarpeta = false)
 {
+	DllCall("LockWindowUpdate", "UInt", windowHandler)
 	GuiControl, Text, Boton1, C:\ProgramData\Nova Macros\resources\img\%RutaBoton1%
-	GuiControl, MoveDraw, Boton1, x130 y50 w130 h130
+	GuiControl, MoveDraw, Boton1, x130 y50 w130 h130 ; Al cambiarle la ruta hay que resizear el boton
 	GuiControl, Text, Boton2, C:\ProgramData\Nova Macros\resources\img\%RutaBoton2%
 	GuiControl, MoveDraw, Boton2, x290 y50 w130 h130
 	GuiControl, Text, Boton3, C:\ProgramData\Nova Macros\resources\img\%RutaBoton3%
@@ -984,10 +1048,12 @@ RefrescarBotones(esCarpeta = false)
 		GuiControl, Text, Boton15, C:\ProgramData\Nova Macros\resources\img\%RutaBoton15%
 		GuiControl, MoveDraw, Boton15, x770 y410 w130 h130		
 	}
+	DllCall("LockWindowUpdate", "UInt", 0)
 }
 
 RefrescarBotonesMini(esCarpeta = false)
 {
+	DllCall("LockWindowUpdate", "UInt", windowHandler)
 	GuiControl, Text, Boton1, C:\ProgramData\Nova Macros\resources\img\%RutaBoton1%
 	GuiControl, MoveDraw, Boton1, x59 y19 w49 h49
 	GuiControl, Text, Boton2, C:\ProgramData\Nova Macros\resources\img\%RutaBoton2%
@@ -1026,11 +1092,13 @@ RefrescarBotonesMini(esCarpeta = false)
 		GuiControl, Text, Boton15, C:\ProgramData\Nova Macros\resources\img\%RutaBoton15%
 		GuiControl, MoveDraw, Boton15, x283 y131 w49 h49
 	}
+	DllCall("LockWindowUpdate", "UInt", 0)
 }
 
 LeftPage:
 	if(MoverRatonAlPulsarBoton)
 		MouseMove, %Pantalla_Mitad_X%, %Pantalla_Mitad_Y%, 0
+	AltTab()
 	if(EnCarpeta)
 	{
 		if(PaginaCarpeta != 0)
@@ -1072,6 +1140,7 @@ return
 RightPage:
 	if(MoverRatonAlPulsarBoton)
 		MouseMove, %Pantalla_Mitad_X%, %Pantalla_Mitad_Y%, 0
+	AltTab()
 	if(EnCarpeta)
 	{
 		if GetKeyState("Control")
@@ -1168,6 +1237,7 @@ EditarScriptBoton(IdBoton)
 }
 
 CambiarRutaEditor:
+; Ruta Editor
 FileSelectFile, RutaEditorScripts, ,,,*.exe
 if RutaEditorScripts =
 	MsgBox, No executable selected!
@@ -1176,6 +1246,7 @@ else
 	FileDelete, ./conf/ScriptEditorPath.txt
 	FileAppend, %RutaEditorScripts%`n, ./conf/ScriptEditorPath.txt
 }
+; Extension Scripts
 InputBox, ExtensionScripts, Button Script EXT, Insert the extension of the Scripts triggered by the buttons`nExamples`: exe`, ahk`, py`.`.`., , 500, 145,,,,,ahk
 if ExtensionScripts =
 	MsgBox, Couldn't retrieve the extension!
@@ -1190,6 +1261,8 @@ GuiClose:
 Exit:
 	ExitApp
 
+; HOTKEYS
+; *******************************
 ~Right::
 IfWinActive, Nova Macros Client
 {
@@ -1207,14 +1280,14 @@ return
 ~^Right::
 IfWinActive, Nova Macros Client
 {
-	gosub, RightPage
+	gosub, RightPage ; Incremento de 10 en 10
 }
 return
 
 ~^Left::
 IfWinActive, Nova Macros Client
 {
-	gosub, LeftPage
+	gosub, LeftPage ; Decremento de 10 en 10
 }
 return
 
@@ -1226,12 +1299,22 @@ EjecutarFuncionBoton(BotonVisual, FicheroEjecutar)
 	{
 		Run, %FicheroEjecutar%.%ExtensionScripts%
 	}
-	Sleep, 150
-	GuiControl, Hide, %Activacion%
+	;CambiarImagenAlternativaBoton(BotonVisual, FicheroEjecutar)
+	feedbackEjecucion.push(Activacion)
+	SetTimer, OcultarFeedbackEjecucion, 150
 }
 
+OcultarFeedbackEjecucion:
+	if(feedbackEjecucion.length() = 1)
+	{
+		SetTimer, OcultarFeedbackEjecucion, Off
+	}
+	GuiControl, Hide, % feedbackEjecucion[1]
+	feedbackEjecucion.remove(1)
+return
+
 CambiarImagenAlternativaBoton(BotonVisual, NumeroBoton)
-{
+{ ; Deprecated, los botones no van a tener estados de momento
 	BotonPulsar := "Boton" BotonVisual
 	if(VariableCambioImagen = 0)
 	{
@@ -1274,8 +1357,8 @@ CreateFolderButton:
 	InputBox, nombreCarpetaNueva, Input Folder Name, Input the folder name WITHOUT spaces or weird symbols. Samples: (Programs`,GameFolder`,OBS_Buttons...)
 	if(nombreCarpetaNueva != "" && !Instr(nombreCarpetaNueva, A_Space))
 	{
-		nuevosBotonesCarpetas := ""
-		nuevosCarpetasBotones := ""
+		nuevosBotonesCarpetas := "" ; Fila 1: 1|5|25...
+		nuevosCarpetasBotones := "" ; Fila 2: OBS|Chrome|Programas...
 		i = 1
 		while(i <= BotonesCarpetas0)
 		{
@@ -1305,8 +1388,8 @@ DeleteFolderButton:
 	OnMessage(0x44, "")
 
 	IfMsgBox Yes, {
-		nuevosBotonesCarpetas := ""
-		nuevosCarpetasBotones := ""
+		nuevosBotonesCarpetas := "" ; Fila 1: 1|5|25...
+		nuevosCarpetasBotones := "" ; Fila 2: OBS|Chrome|Programas...
 		i = 1
 		while(i <= BotonesCarpetas0)
 		{
@@ -1319,8 +1402,8 @@ DeleteFolderButton:
 			}
 			i++
 		}
-		nuevosBotonesCarpetas:=SubStr(nuevosBotonesCarpetas,1,StrLen(nuevosBotonesCarpetas)-1)
-		nuevosCarpetasBotones:=SubStr(nuevosCarpetasBotones,1,StrLen(nuevosCarpetasBotones)-1)
+		nuevosBotonesCarpetas:=SubStr(nuevosBotonesCarpetas,1,StrLen(nuevosBotonesCarpetas)-1) ; Remove last |
+		nuevosCarpetasBotones:=SubStr(nuevosCarpetasBotones,1,StrLen(nuevosCarpetasBotones)-1) ; Remove last |
 		FileDelete, C:\ProgramData\Nova Macros\conf\FolderButtons.txt
 		FileAppend, % nuevosBotonesCarpetas "`n" nuevosCarpetasBotones, C:\ProgramData\Nova Macros\conf\FolderButtons.txt
 		gosub, CargarBotonesCarpeta
@@ -1342,6 +1425,7 @@ DeleteButtonFunction:
 return
 
 CargarBotonesCarpeta:
+	;~ Cargar Botones asociados a carpetas
 	NumeroLoop := 1
 	Loop, read, ./conf/FolderButtons.txt
 	{
@@ -1374,21 +1458,24 @@ OnMsgBox() {
 
 AltTab(){
 	; Alt tab replacement, faster, less distracting
-    list := ""
-    WinGet, id, list
-    Loop, %id%
-    {
-        this_ID := id%A_Index%
-        IfWinActive, ahk_id %this_ID%
-            continue    
-        WinGetTitle, title, ahk_id %this_ID%
-        If (title = "")
-            continue
-        If (!IsWindow(WinExist("ahk_id" . this_ID))) 
-            continue
-        WinActivate, ahk_id %this_ID%, ,2
-            break
-    }
+	if(enviarAltTabAlPulsarBoton)
+	{
+		list := ""
+		WinGet, id, list
+		Loop, %id%
+		{
+			this_ID := id%A_Index%
+			IfWinActive, ahk_id %this_ID%
+				continue    
+			WinGetTitle, title, ahk_id %this_ID%
+			If (title = "")
+				continue
+			If (!IsWindow(WinExist("ahk_id" . this_ID))) 
+				continue
+			WinActivate, ahk_id %this_ID%, ,2
+				break
+		}
+	}
 }
 
 ; Check whether the target window is activation target

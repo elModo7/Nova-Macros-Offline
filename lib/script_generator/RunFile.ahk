@@ -13,10 +13,26 @@ Gui Add, Edit, vworkingDir x80 y40 w301 h21
 Gui Add, Text, x16 y40 w62 h23 +0x200, Working Dir:
 Gui Add, CheckBox, vrunAsAdmin grunAsAdmin x16 y96 w120 h23, Force run as admin
 Gui Font, Bold
-Gui Add, Button, gcreateMacro x360 y88 w104 h28, APPLY
+Gui Add, Button, x16 y120 w246 h28 gDetect, + Detect already open program
+Gui Add, Button, gcreateMacro x360 y120 w104 h28, APPLY
 
-Gui Show, w472 h127, Run File generator
+Gui Show, w472 h157, Run File generator
 Return
+
+Detect:
+	MsgBox,,Select Window, 1) Activate a window of the program you want this macro to run `n2) Press ENTER
+	Hotkey, Enter, DetectOpenProgram, On
+return
+
+DetectOpenProgram:
+	winget, appPath, processpath, a
+	SplitPath, appPath, fileName, workingDir
+	fullFilePath := appPath
+	Hotkey, Enter, DetectOpenProgram, Off
+	GuiControl,,fullFilePath, % fullFilePath
+	GuiControl,,workingDir, % workingDir
+	WinActivate, Run File generator
+return
 
 SelectFile:
 	FileSelectFile, fullFilePath,, %A_Desktop%, Select file to run

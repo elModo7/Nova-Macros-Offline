@@ -3,30 +3,53 @@
 global WindowsKey, Edt1, Edt2
 global buttonName = %0% 
 global buttonPath := "C:\ProgramData\Nova Macros\" buttonName ".ahk"
+global delay
 WindowsKey := 0
 
 Gui, +hwndHw
-Gui, Color, , 4444444
+Gui, Color, , 44444444
 Gui, Font, s14 cffff00 TAhoma
 Gui,Add,Hotkey, W280 x-990 y6 vEdt1 gEdt1 hwndHedt1
-Gui,Add,Edit, x10 y6 w280 vEdt2 hwndHedt2 Background00ffff, None
+Gui,Add,Edit, x10 y6 w280 gEdt2 vEdt2 hwndHedt2 Background00ffff, None
 Gui, Font, s10 c000000 TAhoma
-Gui Add, CheckBox, x16 y48 w190 h23 gWindowsKey vWindowsKey, Windows Key Pressed
 Gui Font, Bold
-Gui Add, Button, x200 y72 w95 h30 gCreate, APPLY
-Gui,Show, w300 h108, Generate Macro
+Gui Add, CheckBox, x16 y48 w190 h23 gWindowsKey vWindowsKey, Windows Key Pressed
+Gui Add, Button, x200 y104 w95 h30 gCreate, APPLY
+Gui Add, Text, x16 y80 w90 h23 +0x200, Custom Key:
+Gui, Font, s10 cffff00 TAhoma
+Gui Add, Edit, vcustomKey gcustomKey x110 y80 w120 h21 ; Custom Key
+Gui, Font, s10 c000000 TAhoma
+Gui Add, Text, x16 y112 w70 h23 +0x200, Delay (s):
+Gui, Font, s10 cffff00 TAhoma
+Gui Add, Edit, vdelay x90 y112 w47 h21 +Number ; Delay
+Gui,Show, w300 h142, Generate Macro
 
-OnMessage(0x133, "Focus_Hk")
-SetTimer, FcEdt, 250
+GuiControl, Focus, Edt1
+;~ OnMessage(0x133, "Focus_Hk") ; Auto Focus Hotkey Field
+;~ SetTimer, FcEdt, 250
 return
 
 Focus_Hk() {
     GuiControl, Focus, Edt1
 }
 
-FcEdt:
-    if !WinActive("ahk_id " Hw)
-        GuiControl, Focus, Edt2
+customKey:
+    GuiControlGet, customKey,,customKey
+    GuiControl,,Edt2, % customKey
+    GuiControl,,Edt1, % customKey
+return
+
+;~ FcEdt:
+    ;~ if !WinActive("ahk_id " Hw)
+        ;~ GuiControl, Focus, Edt2
+;~ return
+
+Edt2:
+    ControlGetFocus, focusedControl, A
+    if(focusedControl = "Edit1")
+    {
+        GuiControl, Focus, Edt1
+    }
 return
 
 Edt1:
@@ -163,6 +186,10 @@ Generar()
         strModificadoresDown := strModificadoresDown "{LWin Down}"
         strModificadoresUp := strModificadoresUp "{LWin Up}"
     }
+    if(delay != "")
+    {
+        delay := "Sleep, " delay*1000
+    }
     if(!hayModificadores)
     {
 		src =
@@ -171,6 +198,7 @@ Generar()
             #SingleInstance, Force
             SetBatchLines, -1
             #NoTrayIcon
+            %delay%
             Send, %Key%
         )
     }
@@ -182,6 +210,7 @@ Generar()
             #SingleInstance, Force
             SetBatchLines, -1
             #NoTrayIcon
+            %delay%
             Send, %strModificadoresDown%
             Sleep, 30
             Send, %Key%
