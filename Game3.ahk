@@ -1,3 +1,5 @@
 #NoEnv
 #NoTrayIcon
-Msgbox, Minecraft Button
+ToolTip, Minecraft Button
+Sleep, 2000
+ExitApp

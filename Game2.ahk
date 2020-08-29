@@ -1,3 +1,5 @@
 #NoEnv
 #NoTrayIcon
-Msgbox, Apex Legends Button
+ToolTip, Apex Legends Button
+Sleep, 2000
+ExitApp
