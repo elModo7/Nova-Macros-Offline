@@ -1,3 +1,5 @@
 #NoEnv
 #NoTrayIcon
-Msgbox, League of Legends Button
+ToolTip, League of Legends Button
+Sleep, 2000
+ExitApp

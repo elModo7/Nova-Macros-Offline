@@ -1,2 +1,2 @@
 #NotrayIcon
-Run, C:\ProgramData\Nova Macros
+Run, %A_ScriptDir%

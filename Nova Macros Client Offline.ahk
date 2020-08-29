@@ -2,7 +2,7 @@
 ; OS Version ...: Windows 10 (Previous versions tested working on Win7)
 ;@Ahk2Exe-SetName Nova Macros Client Offline
 ;@Ahk2Exe-SetDescription Nova Macros for local TouchScreen
-;@Ahk2Exe-SetVersion 2.6-offline
+;@Ahk2Exe-SetVersion 2.7-offline
 ;@Ahk2Exe-SetCopyright Copyright (c) 2020`, elModo7
 ;@Ahk2Exe-SetOrigFilename Nova Macros Client Offline.exe
 ; INITIALIZE
@@ -15,21 +15,17 @@ DetectHiddenWindows, On
 CoordMode,Mouse,Screen
 #Include, <nm_msg>
 global EsVisible = true
-global SiempreVisible, EnCarpeta, MiniClient = false
+global EnCarpeta := MoverRatonAlPulsarBoton := MiniClient := SiempreVisible := enviarAltTabAlPulsarBoton := false
 global Variable, Valor, ValorAnterior, ProgramasRegistrados, PaginasAsociadas, BotonesDuales, CarpetaBoton, PaginaCarpeta, RutaEditorScripts, ExtensionScripts, BotonActivo, BotonAPulsar, windowHandler
 global VariableCambioImagen = 0
 global RutaBoton1, RutaBoton2, RutaBoton3, RutaBoton4, RutaBoton5, RutaBoton6, RutaBoton7, RutaBoton8, RutaBoton9, RutaBoton10, RutaBoton11, RutaBoton12, RutaBoton13, RutaBoton14, RutaBoton15
 global EstadosBotonesDuales := []
 global feedbackEjecucion := []
-global NumeroPagina := 0
+global NumeroPagina := cargaProgresivaIconos := 0
 global MsgBoxBtn1, MsgBoxBtn2, MsgBoxBtn3, MsgBoxBtn4
-; Nuevas variables para la config
-global X_Inicial := 905
-global Y_Inicial := 1080
 global Pantalla_Mitad_X := A_ScreenWidth / 2
 global Pantalla_Mitad_Y := A_ScreenHeight / 2
-global MoverRatonAlPulsarBoton, enviarAltTabAlPulsarBoton := 1
-global ClientVersion := "2.6 Offline"
+global ClientVersion := "2.7 Offline"
 FileCreateDir, conf
 
 if(!FileExist("./conf/ProgramPages.txt"))
@@ -140,7 +136,6 @@ else
 Menu, tray, NoStandard
 Menu, tray, add, Hide, ToggleHide
 Menu, tray, add, Set Editor Path, CambiarRutaEditor
-Menu, tray, add, Mini Client, CambiarDimensionesCliente
 Menu, tray, add
 Menu, tray, add, Exit, Exit
 
@@ -149,9 +144,13 @@ Menu, tray, add, Exit, Exit
 Menu ContextMenuGenerico, Add, Always on Top, SiempreVisible
 Menu ContextMenuGenerico, UnCheck, Always on Top
 Menu ContextMenuGenerico, Add, Center Mouse after Activation, MoverRatonAlPulsarBotonToggle
-Menu ContextMenuGenerico, Check, Center Mouse after Activation
+Menu ContextMenuGenerico, UnCheck, Center Mouse after Activation
 Menu ContextMenuGenerico, Add, Send Alt+Tab after Activation, enviarAltTabAlPulsarBotonToggle
-Menu ContextMenuGenerico, Check, Send Alt+Tab after Activation
+Menu ContextMenuGenerico, UnCheck, Send Alt+Tab after Activation
+Menu ContextMenuGenerico, Add, Progressive Icon Loading, cargaProgresivaIconosToggle
+Menu ContextMenuGenerico, UnCheck, Progressive Icon Loading
+Menu ContextMenuGenerico, Add, Mini Client, CambiarDimensionesCliente
+Menu ContextMenuGenerico, UnCheck, Mini Client
 
 ; CONTEXT MENU BOTONES
 ; *******************************
@@ -275,46 +274,46 @@ Menu ContextMenu, Icon, Delete Button Function, shell32.dll, 132
 ; GUI
 ; *******************************
 Gui, Color, 282828
-Gui -Caption +LastFound +ToolWindow +HwndwindowHandler +E0x02000000 +E0x00080000
+Gui -Caption +LastFound +ToolWindow +HwndwindowHandler +E0x02000000 +E0x00080000 +AlwaysOnTop
 ; Fila1
-Gui Add, Picture, +BackgroundTrans gBoton1 vBoton1, C:\ProgramData\Nova Macros\resources\img\1.png
-Gui Add, Picture, +BackgroundTrans gBoton2 vBoton2, C:\ProgramData\Nova Macros\resources\img\2.png
-Gui Add, Picture, +BackgroundTrans gBoton3 vBoton3, C:\ProgramData\Nova Macros\resources\img\3.png
-Gui Add, Picture, +BackgroundTrans gBoton4 vBoton4, C:\ProgramData\Nova Macros\resources\img\4.png
-Gui Add, Picture, +BackgroundTrans gBoton5 vBoton5, C:\ProgramData\Nova Macros\resources\img\5.png
+Gui Add, Picture, +BackgroundTrans gBoton1 vBoton1, resources\img\1.png
+Gui Add, Picture, +BackgroundTrans gBoton2 vBoton2, resources\img\2.png
+Gui Add, Picture, +BackgroundTrans gBoton3 vBoton3, resources\img\3.png
+Gui Add, Picture, +BackgroundTrans gBoton4 vBoton4, resources\img\4.png
+Gui Add, Picture, +BackgroundTrans gBoton5 vBoton5, resources\img\5.png
 ; Fila2
-Gui Add, Picture, +BackgroundTrans gBoton6 vBoton6, C:\ProgramData\Nova Macros\resources\img\6.png
-Gui Add, Picture, +BackgroundTrans gBoton7 vBoton7, C:\ProgramData\Nova Macros\resources\img\7.png
-Gui Add, Picture, +BackgroundTrans gBoton8 vBoton8, C:\ProgramData\Nova Macros\resources\img\8.png
-Gui Add, Picture, +BackgroundTrans gBoton9 vBoton9, C:\ProgramData\Nova Macros\resources\img\9.png
-Gui Add, Picture, +BackgroundTrans gBoton10 vBoton10, C:\ProgramData\Nova Macros\resources\img\10.png
+Gui Add, Picture, +BackgroundTrans gBoton6 vBoton6, resources\img\6.png
+Gui Add, Picture, +BackgroundTrans gBoton7 vBoton7, resources\img\7.png
+Gui Add, Picture, +BackgroundTrans gBoton8 vBoton8, resources\img\8.png
+Gui Add, Picture, +BackgroundTrans gBoton9 vBoton9, resources\img\9.png
+Gui Add, Picture, +BackgroundTrans gBoton10 vBoton10, resources\img\10.png
 ; Fila3
-Gui Add, Picture, +BackgroundTrans gBoton11 vBoton11, C:\ProgramData\Nova Macros\resources\img\11.png
-Gui Add, Picture, +BackgroundTrans gBoton12 vBoton12, C:\ProgramData\Nova Macros\resources\img\12.png
-Gui Add, Picture, +BackgroundTrans gBoton13 vBoton13, C:\ProgramData\Nova Macros\resources\img\13.png
-Gui Add, Picture, +BackgroundTrans gBoton14 vBoton14, C:\ProgramData\Nova Macros\resources\img\14.png
-Gui Add, Picture, +BackgroundTrans gBoton15 vBoton15, C:\ProgramData\Nova Macros\resources\img\15.png
+Gui Add, Picture, +BackgroundTrans gBoton11 vBoton11, resources\img\11.png
+Gui Add, Picture, +BackgroundTrans gBoton12 vBoton12, resources\img\12.png
+Gui Add, Picture, +BackgroundTrans gBoton13 vBoton13, resources\img\13.png
+Gui Add, Picture, +BackgroundTrans gBoton14 vBoton14, resources\img\14.png
+Gui Add, Picture, +BackgroundTrans gBoton15 vBoton15, resources\img\15.png
 ; Fondos Activaciones Botones
-Gui Add, Picture, vActivar1 Hidden x120 y40 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar2 Hidden x280 y40 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar3 Hidden x440 y40 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar4 Hidden x600 y40 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar5 Hidden x760 y40 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar6 Hidden x120 y220 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar7 Hidden x280 y220 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar8 Hidden x440 y220 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar9 Hidden x600 y220 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar10 Hidden x760 y220 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar11 Hidden x120 y400 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar12 Hidden x280 y400 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar13 Hidden x440 y400 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar14 Hidden x600 y400 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
-Gui Add, Picture, vActivar15 Hidden x760 y400 w150 h150,C:\ProgramData\Nova Macros\resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar1 Hidden x120 y40 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar2 Hidden x280 y40 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar3 Hidden x440 y40 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar4 Hidden x600 y40 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar5 Hidden x760 y40 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar6 Hidden x120 y220 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar7 Hidden x280 y220 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar8 Hidden x440 y220 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar9 Hidden x600 y220 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar10 Hidden x760 y220 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar11 Hidden x120 y400 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar12 Hidden x280 y400 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar13 Hidden x440 y400 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar14 Hidden x600 y400 w150 h150,resources\img\FondoActivacion.png
+Gui Add, Picture, vActivar15 Hidden x760 y400 w150 h150,resources\img\FondoActivacion.png
 ; Botones Página
-Gui Add, Picture, +BackgroundTrans gRightPage vRightPage x910 y240 w130 h130, C:\ProgramData\Nova Macros\resources\img\RightPage.png
-Gui Add, Picture, +BackgroundTrans gLeftPage vLeftPage x0 y240 w130 h130, C:\ProgramData\Nova Macros\resources\img\LeftPage.png
+Gui Add, Picture, +BackgroundTrans gRightPage vRightPage x910 y240 w130 h130, resources\img\RightPage.png
+Gui Add, Picture, +BackgroundTrans gLeftPage vLeftPage x0 y240 w130 h130, resources\img\LeftPage.png
 ; Fondo y secciones mover
-Gui Add, Picture, x0 y0 w1024 h600, C:\ProgramData\Nova Macros\resources\img\background.jpg
+Gui Add, Picture, x0 y0 w1024 h600, resources\img\background.jpg
 Gui, Add, Text, x0 y0 w1024 h50 cWhite Center GMoverVentana vMoverVentanaUp, ; Mover Ventana de arriba
 Gui, Add, Text, x0 y570 w1024 h50 cWhite Center GMoverVentana vMoverVentanaDown, ; Mover Ventana de abajo
 EstablecerPagina(0)
@@ -384,229 +383,229 @@ GuiInfoBoton:
 return
 
 ScriptGenerator_RunFile:
-	Run, "C:\ProgramData\Nova Macros\lib\script_generator\RunFile.ahk" %BotonActivo%
+	Run, "lib\script_generator\RunFile.ahk" %BotonActivo%
 return
 
 ScriptGenerator_RunCmd:
-	Run, "C:\ProgramData\Nova Macros\lib\script_generator\RunCmd.ahk" %BotonActivo%
+	Run, "lib\script_generator\RunCmd.ahk" %BotonActivo%
 return
 
 ScriptGenerator_SendText:
-	Run, "C:\ProgramData\Nova Macros\lib\script_generator\SendTextBlock.ahk" %BotonActivo%
+	Run, "lib\script_generator\SendTextBlock.ahk" %BotonActivo%
 return
 
 ScriptGenerator_Hotkey:
-	Run, "C:\ProgramData\Nova Macros\lib\script_generator\HotkeyCreator.ahk" %BotonActivo%
+	Run, "lib\script_generator\HotkeyCreator.ahk" %BotonActivo%
 return
 
 ScriptGenerator_Multimedia_PlayPause:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_Multimedia_PlayPause.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_PlayPause.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_Multimedia_Stop:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Stop.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Stop.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_Multimedia_Next:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Next.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Next.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_Multimedia_Previous:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Previous.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Previous.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_Multimedia_MoreVolume:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_Multimedia_MoreVolume.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_MoreVolume.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_Multimedia_LessVolume:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_Multimedia_LessVolume.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_LessVolume.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_Multimedia_Mute:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Mute.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Mute.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F13:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F13.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F13.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F14:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F14.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F14.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F15:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F15.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F15.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F16:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F16.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F16.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F17:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F17.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F17.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F18:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F18.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F18.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F19:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F19.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F19.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F20:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F20.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F20.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F21:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F21.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F21.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F22:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F22.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F22.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F23:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F23.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F23.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_FunctionKeys_F24:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F24.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F24.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_WebBrowser_NextTab:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_NextTab.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_NextTab.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_WebBrowser_PreviousTab:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_PreviousTab.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_PreviousTab.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_WebBrowser_NewTab:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_NewTab.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_NewTab.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_WebBrowser_NewWindow:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_NewWindow.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_NewWindow.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_WebBrowser_CloseTab:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_CloseTab.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_CloseTab.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_WebBrowser_RestoreTab:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_RestoreTab.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_RestoreTab.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_WebBrowser_ChromePrivWindow:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_ChromePrivWindow.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_ChromePrivWindow.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_CloseWindow:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_CloseWindow.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_CloseWindow.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_Maximize:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Maximize.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Maximize.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_Minimize:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Minimize.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Minimize.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_ShowDesktop:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_ShowDesktop.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_ShowDesktop.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_NewExplorer:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_NewExplorer.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_NewExplorer.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_NewFolder:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_NewFolder.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_NewFolder.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_QuickRename:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_QuickRename.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_QuickRename.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_LockPC:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_LockPC.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_LockPC.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_Shutdown:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Shutdown.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Shutdown.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_SystemInfo:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_SystemInfo.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_SystemInfo.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_FullSystemInfo:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_FullSystemInfo.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_FullSystemInfo.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_Cmd:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Cmd.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Cmd.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_PowerShell:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_PowerShell.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_PowerShell.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_ScreenShot:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_ScreenShot.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_ScreenShot.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_SnipImage:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_SnipImage.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_SnipImage.ahk,%BotonActivo%.ahk,1
 return
 
 ScriptGenerator_QuickActions_GamePanel:
 	if(ComprobarExistenciaBoton())
-		FileCopy, C:\ProgramData\Nova Macros\lib\script_generator\code_snippets\ScriptGenerator_QuickActions_GamePanel.ahk,C:\ProgramData\Nova Macros\%BotonActivo%.ahk,1
+		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_GamePanel.ahk,%BotonActivo%.ahk,1
 return
 
 NotImplemented:
@@ -615,7 +614,7 @@ return
 
 ComprobarExistenciaBoton()
 {
-	buttonPath := "C:\ProgramData\Nova Macros\" BotonActivo ".ahk"
+	buttonPath := "" BotonActivo ".ahk"
 	if FileExist(buttonPath)
 	{
 		OnMessage(0x44, "OnMsgBox")
@@ -677,11 +676,25 @@ enviarAltTabAlPulsarBotonToggle:
 	}
 return
 
+cargaProgresivaIconosToggle:
+	if(cargaProgresivaIconos)
+	{
+		cargaProgresivaIconos := 0
+		Menu ContextMenuGenerico, UnCheck, Progressive Icon Loading
+	}
+	else
+	{
+		cargaProgresivaIconos := 1
+		Menu ContextMenuGenerico, Check, Progressive Icon Loading
+	}
+return
+ 
 CambiarDimensionesCliente:
-DllCall("LockWindowUpdate", "UInt", windowHandler)
+if(!cargaProgresivaIconos)
+	DllCall("LockWindowUpdate", "UInt", windowHandler)
 if MiniClient
 {
-	Menu, tray, Rename, Normal Client, Mini Client
+	Menu, ContextMenuGenerico, Rename, Normal Client, Mini Client
 	MiniClient = 0
 	GuiControl, MoveDraw, Activar1, x120 y40 w150 h150
 	GuiControl, MoveDraw, Activar2, x280 y40 w150 h150
@@ -706,7 +719,7 @@ if MiniClient
 }
 else
 {
-	Menu, tray, Rename, Mini Client, Normal Client
+	Menu, ContextMenuGenerico, Rename, Mini Client, Normal Client
 	MiniClient = 1
 	GuiControl, MoveDraw, Activar1, x54 y14 w59 h59
 	GuiControl, MoveDraw, Activar2, x110 y14 w59 h59
@@ -949,7 +962,9 @@ PulsarBoton(BotonAPulsar)
 
 EstablecerPagina(NumeroPagina)
 {
-	DllCall("LockWindowUpdate", "UInt", windowHandler)
+	global
+	if(!cargaProgresivaIconos)
+		DllCall("LockWindowUpdate", "UInt", windowHandler)
 	CarpetaBoton := ""
 	RutaBoton1 := CarpetaBoton 15*NumeroPagina+1 ".png"
 	RutaBoton2 := CarpetaBoton 15*NumeroPagina+2 ".png"
@@ -980,7 +995,9 @@ EstablecerPagina(NumeroPagina)
 
 EstablecerPaginaCarpeta(CarpetaBoton, PaginaCarpeta)
 {
-	DllCall("LockWindowUpdate", "UInt", windowHandler)
+	global
+	if(!cargaProgresivaIconos)
+		DllCall("LockWindowUpdate", "UInt", windowHandler)
 	RutaBoton1 := CarpetaBoton 15*PaginaCarpeta+1 ".png"
 	RutaBoton2 := CarpetaBoton 15*PaginaCarpeta+2 ".png"
 	RutaBoton3 := CarpetaBoton 15*PaginaCarpeta+3 ".png"
@@ -1009,43 +1026,45 @@ EstablecerPaginaCarpeta(CarpetaBoton, PaginaCarpeta)
 
 RefrescarBotones(esCarpeta = false)
 {
-	DllCall("LockWindowUpdate", "UInt", windowHandler)
-	GuiControl, Text, Boton1, C:\ProgramData\Nova Macros\resources\img\%RutaBoton1%
+	global
+	if(!cargaProgresivaIconos)
+		DllCall("LockWindowUpdate", "UInt", windowHandler)
+	GuiControl, Text, Boton1, resources\img\%RutaBoton1%
 	GuiControl, MoveDraw, Boton1, x130 y50 w130 h130 ; Al cambiarle la ruta hay que resizear el boton
-	GuiControl, Text, Boton2, C:\ProgramData\Nova Macros\resources\img\%RutaBoton2%
+	GuiControl, Text, Boton2, resources\img\%RutaBoton2%
 	GuiControl, MoveDraw, Boton2, x290 y50 w130 h130
-	GuiControl, Text, Boton3, C:\ProgramData\Nova Macros\resources\img\%RutaBoton3%
+	GuiControl, Text, Boton3, resources\img\%RutaBoton3%
 	GuiControl, MoveDraw, Boton3, x450 y50 w130 h130
-	GuiControl, Text, Boton4, C:\ProgramData\Nova Macros\resources\img\%RutaBoton4%
+	GuiControl, Text, Boton4, resources\img\%RutaBoton4%
 	GuiControl, MoveDraw, Boton4, x610 y50 w130 h130
-	GuiControl, Text, Boton5, C:\ProgramData\Nova Macros\resources\img\%RutaBoton5%
+	GuiControl, Text, Boton5, resources\img\%RutaBoton5%
 	GuiControl, MoveDraw, Boton5, x770 y50 w130 h130
-	GuiControl, Text, Boton6, C:\ProgramData\Nova Macros\resources\img\%RutaBoton6%
+	GuiControl, Text, Boton6, resources\img\%RutaBoton6%
 	GuiControl, MoveDraw, Boton6, x130 w130 y230 h130
-	GuiControl, Text, Boton7, C:\ProgramData\Nova Macros\resources\img\%RutaBoton7%
+	GuiControl, Text, Boton7, resources\img\%RutaBoton7%
 	GuiControl, MoveDraw, Boton7, x290 w130 y230 h130
-	GuiControl, Text, Boton8, C:\ProgramData\Nova Macros\resources\img\%RutaBoton8%
+	GuiControl, Text, Boton8, resources\img\%RutaBoton8%
 	GuiControl, MoveDraw, Boton8, x450 w130 y230 h130
-	GuiControl, Text, Boton9, C:\ProgramData\Nova Macros\resources\img\%RutaBoton9%
+	GuiControl, Text, Boton9, resources\img\%RutaBoton9%
 	GuiControl, MoveDraw, Boton9, x610 w130 y230 h130
-	GuiControl, Text, Boton10, C:\ProgramData\Nova Macros\resources\img\%RutaBoton10%
+	GuiControl, Text, Boton10, resources\img\%RutaBoton10%
 	GuiControl, MoveDraw, Boton10, x770 y230 w130 h130
-	GuiControl, Text, Boton11, C:\ProgramData\Nova Macros\resources\img\%RutaBoton11%
+	GuiControl, Text, Boton11, resources\img\%RutaBoton11%
 	GuiControl, MoveDraw, Boton11, x130 x130 y410 w130 h130
-	GuiControl, Text, Boton12, C:\ProgramData\Nova Macros\resources\img\%RutaBoton12%
+	GuiControl, Text, Boton12, resources\img\%RutaBoton12%
 	GuiControl, MoveDraw, Boton12, x290 y410 w130 h130
-	GuiControl, Text, Boton13, C:\ProgramData\Nova Macros\resources\img\%RutaBoton13%
+	GuiControl, Text, Boton13, resources\img\%RutaBoton13%
 	GuiControl, MoveDraw, Boton13, x450 y410 w130 h130
-	GuiControl, Text, Boton14, C:\ProgramData\Nova Macros\resources\img\%RutaBoton14%
+	GuiControl, Text, Boton14, resources\img\%RutaBoton14%
 	GuiControl, MoveDraw, Boton14, x610 y410 w130 h130
 	if(esCarpeta)
 	{
-		GuiControl, Text, Boton15, C:\ProgramData\Nova Macros\resources\img\Volver.png
+		GuiControl, Text, Boton15, resources\img\Volver.png
 		GuiControl, MoveDraw, Boton15, x770 y410 w130 h130	
 	}
 	else
 	{
-		GuiControl, Text, Boton15, C:\ProgramData\Nova Macros\resources\img\%RutaBoton15%
+		GuiControl, Text, Boton15, resources\img\%RutaBoton15%
 		GuiControl, MoveDraw, Boton15, x770 y410 w130 h130		
 	}
 	DllCall("LockWindowUpdate", "UInt", 0)
@@ -1053,43 +1072,45 @@ RefrescarBotones(esCarpeta = false)
 
 RefrescarBotonesMini(esCarpeta = false)
 {
-	DllCall("LockWindowUpdate", "UInt", windowHandler)
-	GuiControl, Text, Boton1, C:\ProgramData\Nova Macros\resources\img\%RutaBoton1%
+	global
+	if(!cargaProgresivaIconos)
+		DllCall("LockWindowUpdate", "UInt", windowHandler)
+	GuiControl, Text, Boton1, resources\img\%RutaBoton1%
 	GuiControl, MoveDraw, Boton1, x59 y19 w49 h49
-	GuiControl, Text, Boton2, C:\ProgramData\Nova Macros\resources\img\%RutaBoton2%
+	GuiControl, Text, Boton2, resources\img\%RutaBoton2%
 	GuiControl, MoveDraw, Boton2, x115 y19 w49 h49
-	GuiControl, Text, Boton3, C:\ProgramData\Nova Macros\resources\img\%RutaBoton3%
+	GuiControl, Text, Boton3, resources\img\%RutaBoton3%
 	GuiControl, MoveDraw, Boton3, x171 y19 w49 h49
-	GuiControl, Text, Boton4, C:\ProgramData\Nova Macros\resources\img\%RutaBoton4%
+	GuiControl, Text, Boton4, resources\img\%RutaBoton4%
 	GuiControl, MoveDraw, Boton4, x227 y19 w49 h49
-	GuiControl, Text, Boton5, C:\ProgramData\Nova Macros\resources\img\%RutaBoton5%
+	GuiControl, Text, Boton5, resources\img\%RutaBoton5%
 	GuiControl, MoveDraw, Boton5, x283 y19 w49 h49
-	GuiControl, Text, Boton6, C:\ProgramData\Nova Macros\resources\img\%RutaBoton6%
+	GuiControl, Text, Boton6, resources\img\%RutaBoton6%
 	GuiControl, MoveDraw, Boton6, x59 y75 w49 h49
-	GuiControl, Text, Boton7, C:\ProgramData\Nova Macros\resources\img\%RutaBoton7%
+	GuiControl, Text, Boton7, resources\img\%RutaBoton7%
 	GuiControl, MoveDraw, Boton7, x115 y75 w49 h49
-	GuiControl, Text, Boton8, C:\ProgramData\Nova Macros\resources\img\%RutaBoton8%
+	GuiControl, Text, Boton8, resources\img\%RutaBoton8%
 	GuiControl, MoveDraw, Boton8, x171 y75 w49 h49
-	GuiControl, Text, Boton9, C:\ProgramData\Nova Macros\resources\img\%RutaBoton9%
+	GuiControl, Text, Boton9, resources\img\%RutaBoton9%
 	GuiControl, MoveDraw, Boton9, x227 y75 w49 h49
-	GuiControl, Text, Boton10, C:\ProgramData\Nova Macros\resources\img\%RutaBoton10%
+	GuiControl, Text, Boton10, resources\img\%RutaBoton10%
 	GuiControl, MoveDraw, Boton10, x283 y75 w49 h49
-	GuiControl, Text, Boton11, C:\ProgramData\Nova Macros\resources\img\%RutaBoton11%
+	GuiControl, Text, Boton11, resources\img\%RutaBoton11%
 	GuiControl, MoveDraw, Boton11, x59 y131 w49 h49
-	GuiControl, Text, Boton12, C:\ProgramData\Nova Macros\resources\img\%RutaBoton12%
+	GuiControl, Text, Boton12, resources\img\%RutaBoton12%
 	GuiControl, MoveDraw, Boton12, x115 y131 w49 h49
-	GuiControl, Text, Boton13, C:\ProgramData\Nova Macros\resources\img\%RutaBoton13%
+	GuiControl, Text, Boton13, resources\img\%RutaBoton13%
 	GuiControl, MoveDraw, Boton13, x171 y131 w49 h49
-	GuiControl, Text, Boton14, C:\ProgramData\Nova Macros\resources\img\%RutaBoton14%
+	GuiControl, Text, Boton14, resources\img\%RutaBoton14%
 	GuiControl, MoveDraw, Boton14, x227 y131 w49 h49
 	if(esCarpeta)
 	{
-		GuiControl, Text, Boton15, C:\ProgramData\Nova Macros\resources\img\Volver.png
+		GuiControl, Text, Boton15, resources\img\Volver.png
 		GuiControl, MoveDraw, Boton15, x283 y131 w49 h49
 	}
 	else
 	{
-		GuiControl, Text, Boton15, C:\ProgramData\Nova Macros\resources\img\%RutaBoton15%
+		GuiControl, Text, Boton15, resources\img\%RutaBoton15%
 		GuiControl, MoveDraw, Boton15, x283 y131 w49 h49
 	}
 	DllCall("LockWindowUpdate", "UInt", 0)
@@ -1193,7 +1214,7 @@ EstablecerImagenBoton(IdBoton)
 		OnMessage(0x44, "")
 
 		IfMsgBox Yes, {
-			FileDelete, C:\ProgramData\Nova Macros\%IdBoton%.ahk
+			FileDelete, %IdBoton%.ahk
 		}
 	} 
 	Else IfMsgBox Cancel, {
@@ -1227,7 +1248,7 @@ EditarScriptBoton(IdBoton)
 		{
 			FileReadLine,ExtensionScripts,./conf/ExtensionScripts.txt,1
 		}
-		RutaScript := "C:\ProgramData\Nova Macros\" IdBoton "." ExtensionScripts ""
+		RutaScript := "" IdBoton "." ExtensionScripts ""
 		if(!FileExist(RutaScript))
 		{
 			FileAppend,,%RutaScript%
@@ -1318,7 +1339,7 @@ CambiarImagenAlternativaBoton(BotonVisual, NumeroBoton)
 	BotonPulsar := "Boton" BotonVisual
 	if(VariableCambioImagen = 0)
 	{
-		RutaImagen := "C:\ProgramData\Nova Macros\resources\img\" NumeroBoton "Enabled.png"
+		RutaImagen := "resources\img\" NumeroBoton "Enabled.png"
 		if FileExist(RutaImagen)
 		{
 			GuiControl, Text, %BotonPulsar%, %RutaImagen%
@@ -1335,7 +1356,7 @@ CambiarImagenAlternativaBoton(BotonVisual, NumeroBoton)
 	}
 	else
 	{
-		RutaImagen := "C:\ProgramData\Nova Macros\resources\img\" NumeroBoton ".png"
+		RutaImagen := "resources\img\" NumeroBoton ".png"
 		if FileExist(RutaImagen)
 		{
 			GuiControl, Text, %BotonPulsar%, %RutaImagen%
@@ -1370,8 +1391,8 @@ CreateFolderButton:
 		}
 		nuevosBotonesCarpetas := nuevosBotonesCarpetas BotonActivo
 		nuevosCarpetasBotones := nuevosCarpetasBotones nombreCarpetaNueva
-		FileDelete, C:\ProgramData\Nova Macros\conf\FolderButtons.txt
-		FileAppend, % nuevosBotonesCarpetas "`n" nuevosCarpetasBotones, C:\ProgramData\Nova Macros\conf\FolderButtons.txt
+		FileDelete, conf\FolderButtons.txt
+		FileAppend, % nuevosBotonesCarpetas "`n" nuevosCarpetasBotones, conf\FolderButtons.txt
 		gosub, CargarBotonesCarpeta
 	}
 	else
@@ -1404,8 +1425,8 @@ DeleteFolderButton:
 		}
 		nuevosBotonesCarpetas:=SubStr(nuevosBotonesCarpetas,1,StrLen(nuevosBotonesCarpetas)-1) ; Remove last |
 		nuevosCarpetasBotones:=SubStr(nuevosCarpetasBotones,1,StrLen(nuevosCarpetasBotones)-1) ; Remove last |
-		FileDelete, C:\ProgramData\Nova Macros\conf\FolderButtons.txt
-		FileAppend, % nuevosBotonesCarpetas "`n" nuevosCarpetasBotones, C:\ProgramData\Nova Macros\conf\FolderButtons.txt
+		FileDelete, conf\FolderButtons.txt
+		FileAppend, % nuevosBotonesCarpetas "`n" nuevosCarpetasBotones, conf\FolderButtons.txt
 		gosub, CargarBotonesCarpeta
 	}else{
 		return
@@ -1420,7 +1441,7 @@ DeleteButtonFunction:
 	OnMessage(0x44, "")
 
 	IfMsgBox Yes, {
-		FileDelete, C:\ProgramData\Nova Macros\%BotonActivo%.ahk
+		FileDelete, %BotonActivo%.ahk
 	}
 return
 
@@ -1457,6 +1478,7 @@ OnMsgBox() {
 }
 
 AltTab(){
+	global
 	; Alt tab replacement, faster, less distracting
 	if(enviarAltTabAlPulsarBoton)
 	{

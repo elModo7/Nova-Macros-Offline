@@ -1,1 +1,1 @@
-C:\Windows\System32\notepad.exe
+C:\Windows\notepad.exe

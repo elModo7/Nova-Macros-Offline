@@ -2,7 +2,7 @@
 #NoEnv
 SetBatchLines -1
 global buttonName = %0% 
-global buttonPath := "C:\ProgramData\Nova Macros\" buttonName ".ahk"
+global buttonPath := A_ScriptDir "\..\..\" buttonName ".ahk"
 global keyDuration, keyDelay, textVar, sendRaw, sendInput, sendEvent, instantPaste, modoSend
 
 Gui Font, Bold
