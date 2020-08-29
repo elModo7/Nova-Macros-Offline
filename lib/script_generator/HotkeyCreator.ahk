@@ -3,7 +3,6 @@
 global WindowsKey, Edt1, Edt2
 global buttonName = %0% 
 global buttonPath := A_ScriptDir "\..\..\" buttonName ".ahk"
-msgbox, % buttonPath
 global delay
 WindowsKey := 0
 
