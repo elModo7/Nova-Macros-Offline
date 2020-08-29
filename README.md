@@ -28,6 +28,7 @@ Sample:
 ![Sample](https://i.postimg.cc/brVvCHLC/sample.jpg)
 
 Script Generator Samples:
+
 ![Hotkey Creator](https://i.postimg.cc/htsKQKvK/Hotkey-Creator.png)
 ![Run CMD](https://i.postimg.cc/KYYxnC3B/RunCMD.png)
 ![Run File](https://i.postimg.cc/0NHxZZ73/RunFile.png)
