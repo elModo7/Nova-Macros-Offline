@@ -38,4 +38,4 @@ Script Generator Samples:
 ![Send Text Block](https://i.postimg.cc/3R4hqpBw/Send-Text-Block.png)
 
 
-**[AutoHotkey Forum Post](https://www.autohotkey.com/)**
+**[AutoHotkey Forum Post](https://www.autohotkey.com/boards/viewtopic.php?f=6&t=80470)**
