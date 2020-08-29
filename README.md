@@ -10,7 +10,7 @@ Touchscreen use heavily recommended.
 
 **[AutoHotkey (Required)](https://www.autohotkey.com/)**
 
-**[Nova Macros Installer](https://github.com/elModo7/Nova-Macros-Offline/releases/download/2.4-Offline/Nova.Macros.Offline.Installer.exe)**
+**[Nova Macros Installer](https://github.com/elModo7/Nova-Macros-Offline/releases/download/2.7b-Offline/Nova.Macros.Offline.Installer.zip)**
 
 **How to install from source:**
 
