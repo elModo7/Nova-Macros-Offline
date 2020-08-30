@@ -27,6 +27,9 @@ Usage:
 Sample:
 ![Sample](https://i.postimg.cc/brVvCHLC/sample.jpg)
 
+Installer:
+![Sample](https://i.postimg.cc/MZyTBqVN/Captura.png)
+
 Script Generator Samples:
 
 ![Hotkey Creator](https://i.postimg.cc/htsKQKvK/Hotkey-Creator.png)
