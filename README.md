@@ -1,45 +1,86 @@
+# **Nova Macros (*A Stream Deck Clone*)**
+Built for **touchscreen** controls but also works as a normal app.  
+Geared towards **streamers**. 
 
-# Nova Macros Offline
-Offline version of my Stream Deck clono. Built in AHK for AHK. 
+![preview](https://github.com/user-attachments/assets/272423c4-7dc6-471c-83c5-c8145368fcc8)
 
-Tested on Windows 10, not working on Windows 7.
 
-Touchscreen use heavily recommended.
+## **Installing from releases:**
 
-**Installing from releases installer:**
-
-**[AutoHotkey (Required)](https://www.autohotkey.com/)**
+**[AutoHotkey v1 (Required)](https://www.autohotkey.com/)**
 
 **[Nova Macros Installer](https://github.com/elModo7/Nova-Macros-Offline/releases/download/2.7b-Offline/Nova.Macros.Offline.Installer.zip)**
 
-**How to install from source:**
+## **Installing from source:**
 
-Download AutoHotkey from [here](https://www.autohotkey.com/)
+Download **AutoHotkey** from [here](https://www.autohotkey.com/)
+Run ***"Nova Macros Client.ahk"***
 
-Extract source to "C:\ProgramData\Nova Macros"
+  
+# **Features:**
+-   Supports multiple languages compiled or not (***.py, *.ahk, *.exe, *.bat, *.ps1...**)
+-   Button Folders and  **Folder Nesting**
+-   Multiple  **Button Pages**
+-   **Mini Client**  / Default Res Client
+-   **Center Mouse**  in Main Screen after Activation
+-   Always on Top
+- Remote Control
+- Windows/Android Client Support
+-   Configurable  **Script Editor**
+-   **Script Generator (no need to write code):**
+    -   _Run File_
+    -   _Run CMD_
+    -   _Send Text Block_
+    -   _Send Hotkey_
+    -   _Multimedia Functions_
+    -   _Web Broser Functions_
+    -   _Windows Features ready to use scripts_
+    - **OBS Functions**
+	    - Set Scene
+	    - Hide/Show Source
+	    - Start/Stop Recording
+	    - Pause/Resume Recording
+	    - Mute/Unmute Source
+	    - Show Current Scene
+-   Touchscreen & Mouse support
+-   Easy & Quick Install
+-   Completely Portable
 
-Run Nova Macros Client Offline.ahk
+**Requires:**
 
+-   Windows 10 (Previous versions work on win7)
+-   AutoHotkey 1.30+
 
-Usage:
-![Preview](https://i.postimg.cc/VvF8tbF4/Untitled.gif)
+# Pictures:
+**Sample:**
 
-Sample:
 ![Sample](https://i.postimg.cc/brVvCHLC/sample.jpg)
 
-Installer:
+**Button Context Menu:**
 
-![Sample](https://i.postimg.cc/MZyTBqVN/Captura.png)
+![button_context_menu](https://github.com/user-attachments/assets/a4d9cdf0-730b-4ebf-b2d7-2055d0ee7ca5)
 
-Script Generator Samples:
+**OBS Functions:**
 
-![Hotkey Creator](https://i.postimg.cc/htsKQKvK/Hotkey-Creator.png)
+![macro_creator_obs_actions](https://github.com/user-attachments/assets/92674e3c-17f0-47b6-a8fc-aeaefa088c7e)
 
-![Run CMD](https://i.postimg.cc/KYYxnC3B/RunCMD.png)
+**OBS Link:**
 
-![Run File](https://i.postimg.cc/0NHxZZ73/RunFile.png)
+![macro_creator_obs_set_scene](https://github.com/user-attachments/assets/184f3283-75d1-4df4-811f-3d04ca4447ef)
 
-![Send Text Block](https://i.postimg.cc/3R4hqpBw/Send-Text-Block.png)
+**Run File Script Generator:**
 
+![macro_creator_run_file](https://github.com/user-attachments/assets/20e7b36c-4d14-4921-b868-e6a321c53a48)
 
-**[AutoHotkey Forum Post](https://www.autohotkey.com/boards/viewtopic.php?f=6&t=80470)**
+**Send Macro Generator:**
+
+![macro_creator_macro](https://github.com/user-attachments/assets/032682f9-2b0a-4331-be7b-9f42223095dd)
+
+**Script Generator Preview:**
+
+![macro_creator_quick_actions](https://github.com/user-attachments/assets/35d5ad62-af06-468d-82b7-d7ca888f98c5)
+
+**Online Settings:**
+
+![Nova_Macros_Client_zrQCzILpRu](https://github.com/user-attachments/assets/89feb4a2-5a87-46b1-937d-c778fdc12c61)
+
