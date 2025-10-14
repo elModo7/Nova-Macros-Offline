@@ -17,7 +17,7 @@ Specially designed for **streaming** but also for **power users, video editors a
 
 ## **Installing from source:**
 
-Download and Install **32Bit AutoHotkey v1** from [here](https://www.autohotkey.com/)
+Download and Install **32 Bit AutoHotkey v1** from [here](https://www.autohotkey.com/)
 Right click on ***"Nova Macros Client.ahk"***, click **Compile Script**.
 A file named ***"Nova Macros Client.exe"*** will apear, run that file. Done!
 
@@ -32,8 +32,9 @@ A file named ***"Nova Macros Client.exe"*** will apear, run that file. Done!
 -   **Mini Client**  / Default Res Client
 -   **Center Mouse**  in Main Screen after Activation
 -   Always on Top
-- Remote Control
-- Windows/Android Client Support
+- Remote Control (Server Included)
+- Profile Sharing
+- Windows Client Support
 -   Configurable  **Script Editor**
 -   **Script Generator (no need to write code):**
     -   _Run File_
@@ -50,14 +51,31 @@ A file named ***"Nova Macros Client.exe"*** will apear, run that file. Done!
 	    - Pause/Resume Recording
 	    - Mute/Unmute Source
 	    - Show Current Scene
+      	- Sound Panel
+	- **OBSBOT WebCam Gimbal Control**
+ 		- Control Sleep / Wake status
+   		- Set Gimbal Position + Presets
+     	- Record
+      	- Take Photo
+      	- AI Tracking On / Off
+      	- Gimbal Reset
+      	- FOV Change
+      	- AI Tracking Mode
+    - **Spotify Control**
+    	- Play / Pause
+     	- Next / Previous Track
+        - Shuffle Mode Toggle
+        - Repeat Toggle
+        - Volume Up / Down 
 -   Touchscreen & Mouse support
 -   Easy & Quick Install
 -   Completely Portable
+-   Plugin System
 
 **Requires:**
 
 -   Windows 10 (Previous versions work on win7)
--   AutoHotkey 1.30+
+-   AutoHotkey 1.37.02 U32
 
 # Pictures:
 **Sample:**
