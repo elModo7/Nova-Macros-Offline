@@ -1,2 +1,0 @@
-obs64.exe|explorer.exe|chrome.exe
-0|3|1

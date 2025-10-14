@@ -2,8 +2,10 @@
 #NoEnv
 SetBatchLines -1
 global buttonName = %0% 
-global buttonPath := A_ScriptDir "\..\..\" buttonName ".ahk"
+global buttonPath := buttonName ".ahk"
 global keyDuration, keyDelay, textVar, sendRaw, sendInput, sendEvent, instantPaste, modoSend
+SkinForm(Apply, A_ScriptDir . "\lib\them.dll", A_ScriptDir . "\lib\tm")
+OnExit, GetOut
 
 Gui Font, Bold
 Gui Add, Button, gcreateMacro x480 y408 w123 h33, APPLY
@@ -98,8 +100,10 @@ Send, {LControl Down}v{LControl Up}
 	ExitApp
 }
 
+GetOut:
 GuiEscape:
 GuiClose:
+	SkinForm(0)
     ExitApp
 	
 OnMsgBox() {
@@ -109,4 +113,13 @@ OnMsgBox() {
         ControlSetText Button1, Overwrite
         ControlSetText Button2, CANCEL
     }
+}
+
+SkinForm(Param1 = "Apply", DLL = "", SkinName = ""){
+	if(Param1 = Apply){
+		DllCall("LoadLibrary", str, DLL)
+		DllCall(DLL . "\USkinInit", Int,0, Int,0, AStr, SkinName)
+	}else if(Param1 = 0){
+		DllCall(DLL . "\USkinExit")
+		}
 }

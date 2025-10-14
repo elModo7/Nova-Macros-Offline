@@ -1,0 +1,1 @@
+This was only compatible with OBS Websockets 4.x

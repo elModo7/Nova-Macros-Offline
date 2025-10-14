@@ -2,19 +2,21 @@
 #SingleInstance,Force
 global WindowsKey, Edt1, Edt2
 global buttonName = %0% 
-global buttonPath := A_ScriptDir "\..\..\" buttonName ".ahk"
+global buttonPath := buttonName ".ahk"
 global delay
+SkinForm(Apply, A_ScriptDir . "\lib\them.dll", A_ScriptDir . "\lib\tm")
+OnExit, GetOut
 WindowsKey := 0
 
 Gui, +hwndHw
 Gui, Color, , 44444444
 Gui, Font, s14 cffff00 TAhoma
 Gui,Add,Hotkey, W280 x-990 y6 vEdt1 gEdt1 hwndHedt1
-Gui,Add,Edit, x10 y6 w280 gEdt2 vEdt2 hwndHedt2 Background00ffff, None
+Gui,Add,Edit, x10 y6 w350 gEdt2 vEdt2 hwndHedt2 Background00ffff, None
 Gui, Font, s10 c000000 TAhoma
 Gui Font, Bold
 Gui Add, CheckBox, x16 y48 w190 h23 gWindowsKey vWindowsKey, Windows Key Pressed
-Gui Add, Button, x200 y104 w95 h30 gCreate, APPLY
+Gui Add, Button, x260 y104 w95 h30 gCreate, APPLY
 Gui Add, Text, x16 y80 w90 h23 +0x200, Custom Key:
 Gui, Font, s10 cffff00 TAhoma
 Gui Add, Edit, vcustomKey gcustomKey x110 y80 w120 h21 ; Custom Key
@@ -22,7 +24,7 @@ Gui, Font, s10 c000000 TAhoma
 Gui Add, Text, x16 y112 w70 h23 +0x200, Delay (s):
 Gui, Font, s10 cffff00 TAhoma
 Gui Add, Edit, vdelay x90 y112 w47 h21 +Number ; Delay
-Gui,Show, w300 h142, Generate Macro
+Gui,Show, w370 h142, Generate Macro
 
 GuiControl, Focus, Edt1
 ;~ OnMessage(0x133, "Focus_Hk") ; Auto Focus Hotkey Field
@@ -224,5 +226,16 @@ Generar()
 	ExitApp
 }
 
+SkinForm(Param1 = "Apply", DLL = "", SkinName = ""){
+	if(Param1 = Apply){
+		DllCall("LoadLibrary", str, DLL)
+		DllCall(DLL . "\USkinInit", Int,0, Int,0, AStr, SkinName)
+	}else if(Param1 = 0){
+		DllCall(DLL . "\USkinExit")
+		}
+}
+
+GetOut:
 GuiClose:
+    SkinForm(0)
 	ExitApp
