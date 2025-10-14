@@ -1,0 +1,14 @@
+{
+	"builtin_ahk":1,
+	"folderButtons":{
+		"1":"proyectos",
+		"5":"OBS",
+		"6":"App",
+		"8":"AHK",
+		"App10":"intellij"
+	},
+	"port":7778,
+	"resourcePackMD5":"5e29d9203064353102749f0073a646d8",
+	"resourceSharePort":7779,
+	"totalResourceSize":1364911
+}

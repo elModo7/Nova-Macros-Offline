@@ -1,16 +1,22 @@
+; Version 1.1
+/* Changelog
+	1.1: Add quotes to command definition
+*/
 #SingleInstance Force
 #NoEnv
 SetBatchLines -1
 global buttonName = %0% 
-global buttonPath := A_ScriptDir "\..\..\" buttonName ".ahk"
+global buttonPath := buttonName ".ahk"
 global fullFilePath, workingDir, fileName, runAsAdmin
 global switchIfExist := 1
+SkinForm(Apply, A_ScriptDir . "\lib\them.dll", A_ScriptDir . "\lib\tm")
+OnExit, GetOut
 
 Gui Add, Edit, vfullFilePath x16 y8 w365 h21
-Gui Add, Button, gSelectFile x384 y7 w80 h23, Select File
-Gui Add, CheckBox, vswitchIfExist gswitchIfExist x16 y72 w191 h23 +Checked, Switch to app if it is already open
 Gui Add, Edit, vworkingDir x80 y40 w301 h21
 Gui Add, Text, x16 y40 w62 h23 +0x200, Working Dir:
+Gui Add, Button, gSelectFile x384 y7 w80 h23, Select File
+Gui Add, CheckBox, vswitchIfExist gswitchIfExist x16 y72 w191 h23 +Checked, Switch to app if it is already open
 Gui Add, CheckBox, vrunAsAdmin grunAsAdmin x16 y96 w120 h23, Force run as admin
 Gui Font, Bold
 Gui Add, Button, x16 y120 w246 h28 gDetect, + Detect already open program
@@ -102,15 +108,15 @@ SetBatchLines, -1
 #NoTrayIcon
 SetWorkingDir %workingDir%
 
-global Ejecutable := "%fileName%"
+global Executable := "%fileName%"
 
-IfWinExist, ahk_exe `%Ejecutable`%
+IfWinExist, ahk_exe `%Executable`%
 {
-	WinActivate, ahk_exe `%Ejecutable`%
+	WinActivate, ahk_exe `%Executable`%
 }
 else
 {
-	Run, %fullFilePath%
+	Run, "%fullFilePath%"
 }
 		)
 	}
@@ -128,15 +134,15 @@ if not A_IsAdmin
 }
 SetWorkingDir %workingDir%
 
-global Ejecutable := "%fileName%"
+global Executable := "%fileName%"
 
-IfWinExist, ahk_exe `%Ejecutable`%
+IfWinExist, ahk_exe `%Executable`%
 {
-	WinActivate, ahk_exe `%Ejecutable`%
+	WinActivate, ahk_exe `%Executable`%
 }
 else
 {
-	Run, %fullFilePath%
+	Run, "%fullFilePath%"
 }
 )
 	}
@@ -145,8 +151,10 @@ else
 	ExitApp
 }
 
+GetOut:
 GuiEscape:
 GuiClose:
+	SkinForm(0)
     ExitApp
 	
 OnMsgBox() {
@@ -156,4 +164,13 @@ OnMsgBox() {
         ControlSetText Button1, Overwrite
         ControlSetText Button2, CANCEL
     }
+}
+
+SkinForm(Param1 = "Apply", DLL = "", SkinName = ""){
+	if(Param1 = Apply){
+		DllCall("LoadLibrary", str, DLL)
+		DllCall(DLL . "\USkinInit", Int,0, Int,0, AStr, SkinName)
+	}else if(Param1 = 0){
+		DllCall(DLL . "\USkinExit")
+		}
 }
