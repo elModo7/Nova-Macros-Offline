@@ -1,6 +1,6 @@
 # **Nova Macros (*A Stream Deck Clone*)**
-Built for **touchscreen** controls but also works as a normal app.  
-Geared towards **streamers**. 
+Built for **touchscreen** controls but also works as a normal desktop app for managing macros and shortcuts.  
+Specially designed for **streaming** but also for **power users, video editors and programmers**. 
 
 
 <p align="center" width="100%">
@@ -11,14 +11,18 @@ Geared towards **streamers**.
 
 ## **Installing from releases:**
 
-**[AutoHotkey v1 (Required)](https://www.autohotkey.com/)**
+**[AutoHotkey v1 (Heavily Recommended)](https://www.autohotkey.com/)**
 
-**[Nova Macros Installer](https://github.com/elModo7/Nova-Macros-Offline/releases/download/2.7b-Offline/Nova.Macros.Offline.Installer.zip)**
+**[Latest Release](https://github.com/elModo7/Nova-Macros-Offline/releases/download/2.7b-Offline/Nova.Macros.Offline.Installer.zip)**
 
 ## **Installing from source:**
 
-Download **AutoHotkey** from [here](https://www.autohotkey.com/)
-Run ***"Nova Macros Client.ahk"***
+Download and Install **32Bit AutoHotkey v1** from [here](https://www.autohotkey.com/)
+Right click on ***"Nova Macros Client.ahk"***, click **Compile Script**.
+A file named ***"Nova Macros Client.exe"*** will apear, run that file. Done!
+
+> [!IMPORTANT]  
+> Must be compiled with AutoHotkey v1 Unicode 32 bits. If unsure, right click on ***"Nova Macros Client.ahk"*** and click **Compile Script (GUI)** make sure "Base File" is set to U32 AutoHotkey.
 
   
 # **Features:**
