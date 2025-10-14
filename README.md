@@ -2,7 +2,11 @@
 Built for **touchscreen** controls but also works as a normal app.  
 Geared towards **streamers**. 
 
-![preview](https://github.com/user-attachments/assets/272423c4-7dc6-471c-83c5-c8145368fcc8)
+
+<p align="center" width="100%">
+<video src="https://github.com/user-attachments/assets/df9e0e56-9599-4b89-8996-6c2bf91b1275" width="80%" controls></video>
+</p>
+
 ![Network Diagram](https://elmodo7.github.io/static/img/personal_projects/nova_macros/nova_macros_networking.svg)
 
 ## **Installing from releases:**
