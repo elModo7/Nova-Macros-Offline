@@ -1,3 +1,4 @@
+
 # **Nova Macros (*A Stream Deck Clone*)**
 Built for **touchscreen** controls but also works as a normal desktop app for managing macros and shortcuts.  
 Specially designed for **streaming** but also for **power users, video editors and programmers**. 
@@ -28,13 +29,12 @@ A file named ***"Nova Macros Client.exe"*** will apear, run that file. Done!
 # **Features:**
 -   Supports multiple languages compiled or not (***.py, *.ahk, *.exe, *.bat, *.ps1...**)
 -   Button Folders and  **Folder Nesting**
--   Multiple  **Button Pages**
+-   Multiple Button Pages
 -   **Mini Client**  / Default Res Client
--   **Center Mouse**  in Main Screen after Activation
+-   **Center Mouse & Auto Alt+Tab**  in Main Screen after Activation
 -   Always on Top
-- Remote Control (Server Included)
+- **Remote Control (Server Included)**
 - Profile Sharing
-- Windows Client Support
 -   Configurable  **Script Editor**
 -   **Script Generator (no need to write code):**
     -   _Run File_
@@ -44,7 +44,7 @@ A file named ***"Nova Macros Client.exe"*** will apear, run that file. Done!
     -   _Multimedia Functions_
     -   _Web Broser Functions_
     -   _Windows Features ready to use scripts_
-    - **OBS Functions**
+    - **OBS Integration**
 	    - Set Scene
 	    - Hide/Show Source
 	    - Start/Stop Recording
@@ -52,7 +52,7 @@ A file named ***"Nova Macros Client.exe"*** will apear, run that file. Done!
 	    - Mute/Unmute Source
 	    - Show Current Scene
       	- Sound Panel
-	- **OBSBOT WebCam Gimbal Control**
+	- **OBSBOT AI WebCam Control** [OBSBOT Camera Control](https://github.com/elModo7/OBSBOT-Camera-Control-AHK)
  		- Control Sleep / Wake status
    		- Set Gimbal Position + Presets
      	- Record
@@ -61,16 +61,21 @@ A file named ***"Nova Macros Client.exe"*** will apear, run that file. Done!
       	- Gimbal Reset
       	- FOV Change
       	- AI Tracking Mode
-    - **Spotify Control**
+    - **Spotify API integration** [Spotify.ahk](https://github.com/CloakerSmoker/Spotify.ahk)
     	- Play / Pause
      	- Next / Previous Track
         - Shuffle Mode Toggle
         - Repeat Toggle
         - Volume Up / Down 
--   Touchscreen & Mouse support
--   Easy & Quick Install
--   Completely Portable
--   Plugin System
+-   **Touchscreen** support
+-   **Portable**
+-   **Plugin System**
+- **Notification System**
+- Plugins can interact back with the pannel (set: icons, page, background, messages)
+- Precache button icons in RAM for **blazing fast page changes**
+- **Reactive pages** (enables auto page change based on active program)
+- Quick Resource Pack generation
+- One-Key Complete Backup
 
 **Requires:**
 
