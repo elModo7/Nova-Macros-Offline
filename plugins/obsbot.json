@@ -1,0 +1,29 @@
+{
+  "plugin": "obsbot",
+  "priority": 1000,
+  "version": 1,
+  "menus": [
+    {
+      "name": "OBSBOTFunctions",
+      "icon_default": "resources\\img\\ico\\obsbot.ico",
+      "items": [
+        { "type": "command", "label": "Sleep Webcam", "handler": "ScriptGenerator_OBSBOT_Sleep", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Wake Webcam", "handler": "ScriptGenerator_OBSBOT_Wake", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Set Zoom", "handler": "ScriptGenerator_OBSBOT_SetZoom", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Start Recording", "handler": "ScriptGenerator_OBSBOT_StartRecording", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Stop Recording", "handler": "ScriptGenerator_OBSBOT_StopRecording", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Take Photo", "handler": "ScriptGenerator_OBSBOT_TakePhoto", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Reset Gimbal", "handler": "ScriptGenerator_OBSBOT_ResetGimbal", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Set FOV", "handler": "ScriptGenerator_OBSBOT_SetFOV", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Set Mirror", "handler": "ScriptGenerator_OBSBOT_Mirror", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Set Tracking Mode", "handler": "ScriptGenerator_OBSBOT_TrackingMode", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Set AI Lock / Unlock", "handler": "ScriptGenerator_OBSBOT_AILock", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Set AI Mode", "handler": "ScriptGenerator_OBSBOT_AIMode", "icon": "resources\\img\\ico\\obsbot.ico" },
+        { "type": "command", "label": "Set Gimbal Possition", "handler": "ScriptGenerator_OBSBOT_SetGimbalPossition", "icon": "resources\\img\\ico\\obsbot.ico" }
+      ]
+    }
+  ],
+  "register_in": [
+    { "menu": "scriptGenerator", "label": "OBSBOTFunctions", "submenu": "OBSBOTFunctions", "icon": "resources\\img\\ico\\obsbot.ico" }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "plugin": "spotify",
+  "priority": 1000,
+  "version": 1,
+  "menus": [
+    {
+      "name": "Spotify",
+      "icon_default": "resources\\img\\ico\\spotify.ico",
+      "items": [
+        {
+          "type": "command",
+          "label": "Play Pause Toggle",
+          "handler": "ScriptGenerator_Spotify_PlayPauseToggle",
+          "icon": "resources\\img\\ico\\spotify.ico"
+        },
+        {
+          "type": "command",
+          "label": "Next Track",
+          "handler": "ScriptGenerator_Spotify_NextTrack",
+          "icon": "resources\\img\\ico\\spotify.ico"
+        },
+        {
+          "type": "command",
+          "label": "Previous Track",
+          "handler": "ScriptGenerator_Spotify_PreviousTrack",
+          "icon": "resources\\img\\ico\\spotify.ico"
+        },
+        {
+          "type": "command",
+          "label": "Volume Up",
+          "handler": "ScriptGenerator_Spotify_VolumeUp",
+          "icon": "resources\\img\\ico\\spotify.ico"
+        },
+        {
+          "type": "command",
+          "label": "Volume Down",
+          "handler": "ScriptGenerator_Spotify_VolumeDown",
+          "icon": "resources\\img\\ico\\spotify.ico"
+        },
+        {
+          "type": "command",
+          "label": "Repeat Mode",
+          "handler": "ScriptGenerator_Spotify_RepeatMode",
+          "icon": "resources\\img\\ico\\spotify.ico"
+        },
+        {
+          "type": "command",
+          "label": "Shuffle Mode",
+          "handler": "ScriptGenerator_Spotify_ShuffleMode",
+          "icon": "resources\\img\\ico\\spotify.ico"
+        }
+      ]
+    }
+  ],
+  "register_in": [
+    {
+      "menu": "scriptGenerator",
+      "label": "Spotify",
+      "submenu": "Spotify",
+      "icon": "resources\\img\\ico\\spotify.ico"
+    }
+  ]
+}

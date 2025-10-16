@@ -1,0 +1,22 @@
+{
+  "plugin": "multimedia_functions",
+  "priority": 1000,
+  "version": 1,
+  "menus": [
+    {
+      "name": "MultimediaFunctions",
+      "items": [
+        { "type": "command", "label": "Play / Pause", "handler": "ScriptGenerator_Multimedia_PlayPause", "icon": { "file": "imageres.dll", "index": 62 } },
+        { "type": "command", "label": "Stop", "handler": "ScriptGenerator_Multimedia_Stop", "icon": { "file": "imageres.dll", "index": 62 } },
+        { "type": "command", "label": "Previous", "handler": "ScriptGenerator_Multimedia_Previous", "icon": { "file": "imageres.dll", "index": 62 } },
+        { "type": "command", "label": "Next", "handler": "ScriptGenerator_Multimedia_Next", "icon": { "file": "imageres.dll", "index": 62 } },
+        { "type": "command", "label": "Volume +", "handler": "ScriptGenerator_Multimedia_MoreVolume", "icon": { "file": "imageres.dll", "index": 62 } },
+        { "type": "command", "label": "Volume -", "handler": "ScriptGenerator_Multimedia_LessVolume", "icon": { "file": "imageres.dll", "index": 62 } },
+        { "type": "command", "label": "Mute / Unmute", "handler": "ScriptGenerator_Multimedia_Mute", "icon": { "file": "imageres.dll", "index": 62 } }
+      ]
+    }
+  ],
+  "register_in": [
+    { "menu": "scriptGenerator", "label": "Multimedia", "submenu": "MultimediaFunctions", "icon": { "file": "imageres.dll", "index": 19 } }
+  ]
+}

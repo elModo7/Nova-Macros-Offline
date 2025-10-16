@@ -1,0 +1,32 @@
+{
+  "plugin": "quick_actions",
+  "priority": 1000,
+  "version": 1,
+  "menus": [
+    {
+      "name": "QuickActionsMenu",
+      "items": [
+        { "type": "command", "label": "Close Window", "handler": "ScriptGenerator_QuickActions_CloseWindow", "icon": ".\\resources\\img\\ico\\windows\\close3.ico" },
+        { "type": "command", "label": "Maximize Window", "handler": "ScriptGenerator_QuickActions_Maximize", "icon": { "file": "imageres.dll", "index": 287 } },
+        { "type": "command", "label": "Minimize Window", "handler": "ScriptGenerator_QuickActions_Minimize", "icon": { "file": "imageres.dll", "index": 17 } },
+        { "type": "command", "label": "Show Desktop", "handler": "ScriptGenerator_QuickActions_ShowDesktop", "icon": { "file": "imageres.dll", "index": 106 } },
+        { "type": "command", "label": "New Explorer Window", "handler": "ScriptGenerator_QuickActions_NewExplorer", "icon": { "file": "imageres.dll", "index": 5 } },
+        { "type": "command", "label": "New Folder", "handler": "ScriptGenerator_QuickActions_NewFolder", "icon": ".\\resources\\img\\ico\\windows\\folder.ico" },
+        { "type": "command", "label": "Quick Rename File", "handler": "ScriptGenerator_QuickActions_QuickRename", "icon": { "file": "shell32.dll", "index": 134 } },
+        { "type": "command", "label": "Lock PC", "handler": "ScriptGenerator_QuickActions_LockPC", "icon": { "file": "shell32.dll", "index": 45 } },
+        { "type": "command", "label": "Shutdown PC", "handler": "ScriptGenerator_QuickActions_Shutdown", "icon": { "file": "shell32.dll", "index": 28 } },
+        { "type": "command", "label": "System Info", "handler": "ScriptGenerator_QuickActions_SystemInfo", "icon": { "file": "shell32.dll", "index": 24 } },
+        { "type": "command", "label": "System FULL Info", "handler": "ScriptGenerator_QuickActions_FullSystemInfo", "icon": { "file": "shell32.dll", "index": 22 } },
+        { "type": "command", "label": "cmd.exe", "handler": "ScriptGenerator_QuickActions_Cmd", "icon": ".\\resources\\img\\ico\\windows\\cmd.ico" },
+        { "type": "command", "label": "PowerShell", "handler": "ScriptGenerator_QuickActions_PowerShell", "icon": ".\\resources\\img\\ico\\windows\\powershell.ico" },
+        { "type": "command", "label": "Take Screenshot", "handler": "ScriptGenerator_QuickActions_ScreenShot", "icon": { "file": "imageres.dll", "index": 68 } },
+        { "type": "command", "label": "Snip img from screen", "handler": "ScriptGenerator_QuickActions_SnipImage", "icon": { "file": "imageres.dll", "index": 17 } },
+        { "type": "command", "label": "Windows Gaming Panel", "handler": "ScriptGenerator_QuickActions_GamePanel", "icon": { "file": "imageres.dll", "index": 305 } },
+        { "type": "command", "label": "Windows Emoji Panel", "handler": "ScriptGenerator_QuickActions_EmojiPanel", "icon": { "file": "imageres.dll", "index": 205 } }
+      ]
+    }
+  ],
+  "register_in": [
+    { "menu": "scriptGenerator", "label": "Quick Actions", "submenu": "QuickActionsMenu", "icon": ".\\resources\\img\\ico\\windows\\pin.ico" }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "plugin": "notifications",
+  "priority": 1000,
+  "version": 1,
+  "menus": [
+    {
+      "name": "Notifications",
+      "icon_default": "resources\\img\\ico\\telegram.ico",
+      "items": [
+        { "type": "command", "label": "Telegram", "handler": "NotImplemented", "icon": "resources\\img\\ico\\telegram.ico" },
+        { "type": "command", "label": "Whatsapp", "handler": "NotImplemented", "icon": "resources\\img\\ico\\whatsapp.ico" },
+        { "type": "command", "label": "Discord", "handler": "NotImplemented", "icon": "resources\\img\\ico\\discord.ico" },
+        { "type": "command", "label": "Microsoft Teams", "handler": "NotImplemented", "icon": "resources\\img\\ico\\teams.ico" },
+        { "type": "command", "label": "Gmail", "handler": "NotImplemented", "icon": "resources\\img\\ico\\gmail.ico" },
+        { "type": "command", "label": "Twitch", "handler": "NotImplemented", "icon": "resources\\img\\ico\\twitch.ico" }
+      ]
+    }
+  ],
+  "register_in": [
+    { "menu": "scriptGenerator", "label": "Notifications", "submenu": "Notifications", "icon": "resources\\img\\ico\\telegram.ico" }
+  ]
+}

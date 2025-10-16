@@ -2,14 +2,14 @@
 ; Requires AutoHotkeyU32
 ;@Ahk2Exe-SetName Nova Macros Client
 ;@Ahk2Exe-SetDescription Nova Macros for TouchScreen and Remote Control
-;@Ahk2Exe-SetVersion 3.7.5
+;@Ahk2Exe-SetVersion 3.8.6
 ;@Ahk2Exe-SetCopyright Copyright (c) 2025`, elModo7 - VictorDevLog
 ;@Ahk2Exe-SetOrigFilename Nova Macros Client.exe
 ; INITIALIZE
 ; *******************************
 /*
 TODO:
-- Reactive window configurer (Program Selector, Page Selector)
+- Reactive window configurer GUI (Program Selector, Page Selector)
 - Más funciones de OBS
 - BtnDescriptions (label con texto de descripción (texto, color, transparencia, fontweight))
 
@@ -17,6 +17,7 @@ REQUIERES:
 - Windows 10
 - AutoHotkey U32 (las librerías JSON y them.dll no funcionan en U64)
 - Compilar sin MPRESS, se pierde compatibilidad con USkin.dll
+- Notification System ONLY works when compiled
 
 DISCARDED:
 - Volver a la carpeta anterior y volver a la raíz si se pulsa p.ej control
@@ -24,6 +25,10 @@ DISCARDED:
 LATEST CHANGES:
 - OBS Websocket Compat 4.x -> 5.X
 - Improve online mode
+- Add dynamic buttons (3.7.6+)
+- Add notifications integration (same machine via talk.ahk) (3.7.6+)
+- Add remote icon, background changes (3.8.1+)
+- Add spotify integration (3.8.2+) -> https://github.com/CloakerSmoker/Spotify.ahk
 
 COMMENTS:
 - This script is one of my very first AutoHotkey scripts (Jun 2017), it can be improved A LOT, code quality wise (starting from keeping it consistent with a single language instead of Spanglish). However, I use it on a day to day basis and it is "robust enough" and convenient that I make heavy use of it, even above any other Hotkey, Dedicated Keyboard, Macro Deck, StreamDock or Android solutions I currently have purchased.
@@ -37,15 +42,16 @@ SetWorkingDir %A_ScriptDir%
 DetectHiddenWindows, On
 CoordMode,Mouse,Screen
 SetBatchLines, -1
-#Include, <nm_msg>
 #Include, <JSON>
 #Include <SplashScreen>
 #Include <Socket>
 #Include <util>
 #Include <client_updater>
 #Include <aboutScreen>
+#Include <talk>
+#Include <plugin_system>
 rutaSplash = ./resources/img/splash.png
-global ClientVersionNumber := "3.7.5"
+global ClientVersionNumber := "3.8.6"
 global ClientVersion := ClientVersionNumber " - elModo7 / VictorDevLog " A_YYYY
 SplashScreen(rutaSplash, 3000, 545, 160, 0, 0, true)
 global EsVisible = true
@@ -53,6 +59,7 @@ global EnCarpeta = false
 global CarpetaBoton, PaginaCarpeta, BotonActivo, BotonAPulsar, windowHandler, IpTxt, PortTxt, OnlineChk, AHK_ICONCLICKCOUNT, server_config, previousActiveProcess
 global RutaBoton1, RutaBoton2, RutaBoton3, RutaBoton4, RutaBoton5, RutaBoton6, RutaBoton7, RutaBoton8, RutaBoton9, RutaBoton10, RutaBoton11, RutaBoton12, RutaBoton13, RutaBoton14, RutaBoton15
 global feedbackEjecucion := []
+global plugins := []
 global NumeroPagina := 0
 global serverFound := 0
 global reactiveWindow := 0
@@ -63,6 +70,12 @@ FileCreateDir, conf
 global btnPics := {}
 GuiControl, splashScreen:, splashTxt, % "Reading config..."
 contextcolor(2) ;0=Default ;1=AllowDark ;2=ForceDark ;3=ForceLight ;4=Max
+
+; Talk (WM_COPYDATA) params
+global incomingNotification := {"text": "", "duration": 1000, "region": "top"} ; Notification System
+global incomingButtonChange := {"imagePathOrName": "", "buttonId": 14}
+global incomingBackgroundChange := {"imagePathOrName": ""}
+global incomingPageChange := {"pageNumber": 0, "isFolder": 0, "folderName": ""}
 
 if(!FileExist("./conf/config.json"))
 {
@@ -212,175 +225,17 @@ else
 Menu ContextMenuGenerico, Add, Bind this folder to a program or window, bindFolderToProgramOrWindow
 Menu ContextMenuGenerico, Disable, Bind this folder to a program or window
 
-; CONTEXT MENU BOTONES
-; *******************************
-Menu scriptGenerator, Add, Run File, ScriptGenerator_RunFile
-Menu scriptGenerator, Icon, Run File, shell32.dll, 25
-Menu scriptGenerator, Add, Run Cmd, ScriptGenerator_RunCmd
-Menu scriptGenerator, Icon, Run Cmd, .\resources\img\ico\windows\powershell.ico
-Menu scriptGenerator, Add, Send Text, ScriptGenerator_SendText
-Menu scriptGenerator, Icon, Send Text, shell32.dll, 71
-Menu scriptGenerator, Add, Hotkey - Macro, ScriptGenerator_Hotkey
-Menu scriptGenerator, Icon, Hotkey - Macro, imageres.dll, 174
-Menu MultimediaFunctions, Add, Play / Pause, ScriptGenerator_Multimedia_PlayPause
-Menu MultimediaFunctions, Icon, Play / Pause, imageres.dll, 62
-Menu MultimediaFunctions, Add, Stop, ScriptGenerator_Multimedia_Stop
-Menu MultimediaFunctions, Icon, Stop, imageres.dll, 62
-Menu MultimediaFunctions, Add, Previous, ScriptGenerator_Multimedia_Previous
-Menu MultimediaFunctions, Icon, Previous, imageres.dll, 62
-Menu MultimediaFunctions, Add, Next, ScriptGenerator_Multimedia_Next
-Menu MultimediaFunctions, Icon, Next, imageres.dll, 62
-Menu MultimediaFunctions, Add, Volume +, ScriptGenerator_Multimedia_MoreVolume
-Menu MultimediaFunctions, Icon, Volume +, imageres.dll, 62
-Menu MultimediaFunctions, Add, Volume -, ScriptGenerator_Multimedia_LessVolume
-Menu MultimediaFunctions, Icon, Volume -, imageres.dll, 62
-Menu MultimediaFunctions, Add, Mute / Unmute, ScriptGenerator_Multimedia_Mute
-Menu MultimediaFunctions, Icon, Mute / Unmute, imageres.dll, 62
-Menu QuickActionsMenu, Add, Close Window, ScriptGenerator_QuickActions_CloseWindow
-Menu QuickActionsMenu, Icon, Close Window, .\resources\img\ico\windows\close3.ico
-Menu QuickActionsMenu, Add, Maximize Window, ScriptGenerator_QuickActions_Maximize
-Menu QuickActionsMenu, Icon, Maximize Window, imageres.dll, 287
-Menu QuickActionsMenu, Add, Minimize Window, ScriptGenerator_QuickActions_Minimize
-Menu QuickActionsMenu, Icon, Minimize Window, imageres.dll, 17
-Menu QuickActionsMenu, Add, Show Desktop, ScriptGenerator_QuickActions_ShowDesktop
-Menu QuickActionsMenu, Icon, Show Desktop, imageres.dll, 106
-Menu QuickActionsMenu, Add, New Explorer Window, ScriptGenerator_QuickActions_NewExplorer
-Menu QuickActionsMenu, Icon, New Explorer Window, imageres.dll, 5
-Menu QuickActionsMenu, Add, New Folder, ScriptGenerator_QuickActions_NewFolder
-Menu QuickActionsMenu, Icon, New Folder, .\resources\img\ico\windows\folder.ico
-Menu QuickActionsMenu, Add, Quick Rename File, ScriptGenerator_QuickActions_QuickRename
-Menu QuickActionsMenu, Icon, Quick Rename File, shell32.dll, 134
-Menu QuickActionsMenu, Add, Lock PC, ScriptGenerator_QuickActions_LockPC
-Menu QuickActionsMenu, Icon, Lock PC, shell32.dll, 45
-Menu QuickActionsMenu, Add, Shutdown PC, ScriptGenerator_QuickActions_Shutdown
-Menu QuickActionsMenu, Icon, Shutdown PC, shell32.dll, 28
-Menu QuickActionsMenu, Add, System Info, ScriptGenerator_QuickActions_SystemInfo
-Menu QuickActionsMenu, Icon, System Info, shell32.dll, 24
-Menu QuickActionsMenu, Add, System FULL Info, ScriptGenerator_QuickActions_FullSystemInfo
-Menu QuickActionsMenu, Icon, System FULL Info, shell32.dll, 22
-Menu QuickActionsMenu, Add, cmd.exe, ScriptGenerator_QuickActions_Cmd
-Menu QuickActionsMenu, Icon, cmd.exe, .\resources\img\ico\windows\cmd.ico
-Menu QuickActionsMenu, Add, PowerShell, ScriptGenerator_QuickActions_PowerShell
-Menu QuickActionsMenu, Icon, PowerShell, .\resources\img\ico\windows\powershell.ico
-Menu QuickActionsMenu, Add, Take Screenshot, ScriptGenerator_QuickActions_ScreenShot
-Menu QuickActionsMenu, Icon, Take Screenshot, imageres.dll, 68
-Menu QuickActionsMenu, Add, Snip img from screen, ScriptGenerator_QuickActions_SnipImage
-Menu QuickActionsMenu, Icon, Snip img from screen, imageres.dll, 17
-Menu QuickActionsMenu, Add, Windows Gaming Panel, ScriptGenerator_QuickActions_GamePanel
-Menu QuickActionsMenu, Icon, Windows Gaming Panel, imageres.dll, 305
-Menu QuickActionsMenu, Add, Windows Emoji Panel, ScriptGenerator_QuickActions_EmojiPanel
-Menu QuickActionsMenu, Icon, Windows Emoji Panel, imageres.dll, 205
-Menu WebBrowserCommands, Add, Next Tab, ScriptGenerator_WebBrowser_NextTab
-Menu WebBrowserCommands, Icon, Next Tab, shell32.dll, 15
-Menu WebBrowserCommands, Add, Previous Tab, ScriptGenerator_WebBrowser_PreviousTab
-Menu WebBrowserCommands, Icon, Previous Tab, shell32.dll, 15
-Menu WebBrowserCommands, Add, New Tab, ScriptGenerator_WebBrowser_NewTab
-Menu WebBrowserCommands, Icon, New Tab, shell32.dll, 15
-Menu WebBrowserCommands, Add, New Window, ScriptGenerator_WebBrowser_NewWindow
-Menu WebBrowserCommands, Icon, New Window, shell32.dll, 15
-Menu WebBrowserCommands, Add, Close Tab, ScriptGenerator_WebBrowser_CloseTab
-Menu WebBrowserCommands, Icon, Close Tab, shell32.dll, 15
-Menu WebBrowserCommands, Add, Restore Closed Tab, ScriptGenerator_WebBrowser_RestoreTab
-Menu WebBrowserCommands, Icon, Restore Closed Tab, shell32.dll, 15
-Menu WebBrowserCommands, Add, Chrome Private Window (NEW), ScriptGenerator_WebBrowser_ChromePrivWindow
-Menu WebBrowserCommands, Icon, Chrome Private Window (NEW), shell32.dll, 15
-Menu FunctionKeysMenu, Add, F13, ScriptGenerator_FunctionKeys_F13
-Menu FunctionKeysMenu, Icon, F13, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F14, ScriptGenerator_FunctionKeys_F14
-Menu FunctionKeysMenu, Icon, F14, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F15, ScriptGenerator_FunctionKeys_F15
-Menu FunctionKeysMenu, Icon, F15, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F16, ScriptGenerator_FunctionKeys_F16
-Menu FunctionKeysMenu, Icon, F16, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F17, ScriptGenerator_FunctionKeys_F17
-Menu FunctionKeysMenu, Icon, F17, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F18, ScriptGenerator_FunctionKeys_F18
-Menu FunctionKeysMenu, Icon, F18, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F19, ScriptGenerator_FunctionKeys_F19
-Menu FunctionKeysMenu, Icon, F19, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F20, ScriptGenerator_FunctionKeys_F20
-Menu FunctionKeysMenu, Icon, F20, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F21, ScriptGenerator_FunctionKeys_F21
-Menu FunctionKeysMenu, Icon, F21, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F22, ScriptGenerator_FunctionKeys_F22
-Menu FunctionKeysMenu, Icon, F22, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F23, ScriptGenerator_FunctionKeys_F23
-Menu FunctionKeysMenu, Icon, F23, imageres.dll, 174
-Menu FunctionKeysMenu, Add, F24, ScriptGenerator_FunctionKeys_F24
-Menu FunctionKeysMenu, Icon, F24, imageres.dll, 174
-Menu OBSFunctions, Add, Set Scene, ScriptGenerator_OBS_SetScene
-Menu OBSFunctions, Icon, Set Scene, resources\img\ico\OBS.ico
-Menu OBSFunctions, Add, Hide/Show Source, ScriptGenerator_OBS_HideShowSource
-Menu OBSFunctions, Icon, Hide/Show Source, resources\img\ico\OBS.ico
-Menu OBSFunctions, Add, Start Recording, ScriptGenerator_OBS_Record
-Menu OBSFunctions, Icon, Start Recording, resources\img\ico\OBS.ico
-Menu OBSFunctions, Add, Stop Recording, ScriptGenerator_OBS_StopRecord
-Menu OBSFunctions, Icon, Stop Recording, resources\img\ico\OBS.ico
-Menu OBSFunctions, Add, Pause Recording, ScriptGenerator_OBS_PauseRecord
-Menu OBSFunctions, Icon, Pause Recording, resources\img\ico\OBS.ico
-Menu OBSFunctions, Add, Resume Recording, ScriptGenerator_OBS_ResumeRecord
-Menu OBSFunctions, Icon, Resume Recording, resources\img\ico\OBS.ico
-Menu OBSFunctions, Add, Mute/Unmute Source, ScriptGenerator_OBS_MuteUnmuteSource
-Menu OBSFunctions, Icon, Mute/Unmute Source, resources\img\ico\OBS.ico
-Menu OBSFunctions, Add, Show current Scene, ScriptGenerator_OBS_ShowCurrentScene
-Menu OBSFunctions, Icon, Show current Scene, resources\img\ico\OBS.ico
-Menu OBSFunctions, Add, Sound Pannel, ScriptGenerator_OBS_SoundPannel
-Menu OBSFunctions, Icon, Sound Pannel, resources\img\ico\OBS.ico
-
-Menu OBSBOTFunctions, Add, Sleep Webcam, ScriptGenerator_OBSBOT_Sleep
-Menu OBSBOTFunctions, Icon, Sleep Webcam, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Wake Webcam, ScriptGenerator_OBSBOT_Wake
-Menu OBSBOTFunctions, Icon, Wake Webcam, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Set Zoom, ScriptGenerator_OBSBOT_SetZoom
-Menu OBSBOTFunctions, Icon, Set Zoom, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Start Recording, ScriptGenerator_OBSBOT_StartRecording
-Menu OBSBOTFunctions, Icon, Start Recording, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Stop Recording, ScriptGenerator_OBSBOT_StopRecording
-Menu OBSBOTFunctions, Icon, Stop Recording, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Take Photo, ScriptGenerator_OBSBOT_TakePhoto
-Menu OBSBOTFunctions, Icon, Take Photo, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Reset Gimbal, ScriptGenerator_OBSBOT_ResetGimbal
-Menu OBSBOTFunctions, Icon, Reset Gimbal, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Set FOV, ScriptGenerator_OBSBOT_SetFOV
-Menu OBSBOTFunctions, Icon, Set FOV, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Set Mirror, ScriptGenerator_OBSBOT_Mirror
-Menu OBSBOTFunctions, Icon, Set Mirror, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Set Tracking Mode, ScriptGenerator_OBSBOT_TrackingMode
-Menu OBSBOTFunctions, Icon, Set Tracking Mode, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Set AI Lock / Unlock, ScriptGenerator_OBSBOT_AILock
-Menu OBSBOTFunctions, Icon, Set AI Lock / Unlock, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Set AI Mode, ScriptGenerator_OBSBOT_AIMode
-Menu OBSBOTFunctions, Icon, Set AI Mode, resources\img\ico\obsbot.ico
-Menu OBSBOTFunctions, Add, Set Gimbal Possition, ScriptGenerator_OBSBOT_SetGimbalPossition
-Menu OBSBOTFunctions, Icon, Set Gimbal Possition, resources\img\ico\obsbot.ico
-
-Menu Notifications, Add, Telegram, NotImplemented
-Menu Notifications, Icon, Telegram, resources\img\ico\telegram.ico
-Menu Notifications, Add, Whatsapp, NotImplemented
-Menu Notifications, Icon, Whatsapp, resources\img\ico\whatsapp.ico
-Menu Notifications, Add, Discord, NotImplemented
-Menu Notifications, Icon, Discord, resources\img\ico\discord.ico
-Menu Notifications, Add, Microsoft Teams, NotImplemented
-Menu Notifications, Icon, Microsoft Teams, resources\img\ico\teams.ico
-Menu Notifications, Add, Gmail, NotImplemented
-Menu Notifications, Icon, Gmail, resources\img\ico\gmail.ico
-Menu Notifications, Add, Twitch, NotImplemented
-Menu Notifications, Icon, Twitch, resources\img\ico\twitch.ico
-
-Menu scriptGenerator, Add, Multimedia, :MultimediaFunctions
-Menu scriptGenerator, Icon, Multimedia, imageres.dll, 19
-Menu scriptGenerator, Add, Web Browser, :WebBrowserCommands
-Menu scriptGenerator, Icon, Web Browser, shell32.dll, 221
-Menu scriptGenerator, Add, Quick Actions, :QuickActionsMenu
-Menu scriptGenerator, Icon, Quick Actions, .\resources\img\ico\windows\pin.ico
-Menu scriptGenerator, Add, Hidden Function Keys (F13-F24), :FunctionKeysMenu
-Menu scriptGenerator, Icon, Hidden Function Keys (F13-F24), imageres.dll, 174
-Menu scriptGenerator, Add, OBS Functions, :OBSFunctions
-Menu scriptGenerator, Icon, OBS Functions, resources\img\ico\OBS.ico
-Menu scriptGenerator, Add, OBSBOT Functions, :OBSBOTFunctions
-Menu scriptGenerator, Icon, OBSBOT Functions, resources\img\ico\OBSBOT.ico
-Menu scriptGenerator, Add, Notifications, :Notifications
-Menu scriptGenerator, Icon, Notifications, resources\img\ico\telegram.ico
+; Plugin System
+GuiControl, splashScreen:, splashTxt, % "Loading Plugins..."
+Loop, Files, plugins/*.json
+{
+	FileRead, pluginJson, % A_LoopFileFullPath
+	plugin := ParseJson(pluginJson)
+	plugins.push(plugin)
+}
+SortPluginsByPriority(plugins)
+gosub, reloadPlugins
+GuiControl, splashScreen:, splashTxt, % "Loaded Plugins!"
 
 Menu ContextMenu, Add, Edit Script`tShift + Click, GuiEditarScript
 Menu ContextMenu, Default, Edit Script`tShift + Click
@@ -435,24 +290,14 @@ GuiControl, splashScreen:, splashTxt, % "Creating GUI..."
 ; *******************************
 Gui, Color, 282828
 Gui -Caption +LastFound +ToolWindow +HwndwindowHandler +E0x02080000
-; Fila1
-Gui Add, Picture, +BackgroundTrans gBoton1 vBoton1, % btnPics["1.png"] ? "HBITMAP:*" btnPics["1.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton2 vBoton2, % btnPics["2.png"] ? "HBITMAP:*" btnPics["2.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton3 vBoton3, % btnPics["3.png"] ? "HBITMAP:*" btnPics["3.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton4 vBoton4, % btnPics["4.png"] ? "HBITMAP:*" btnPics["4.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton5 vBoton5, % btnPics["5.png"] ? "HBITMAP:*" btnPics["5.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-; Fila2
-Gui Add, Picture, +BackgroundTrans gBoton6 vBoton6, % btnPics["6.png"] ? "HBITMAP:*" btnPics["6.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton7 vBoton7, % btnPics["7.png"] ? "HBITMAP:*" btnPics["7.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton8 vBoton8, % btnPics["8.png"] ? "HBITMAP:*" btnPics["8.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton9 vBoton9, % btnPics["9.png"] ? "HBITMAP:*" btnPics["9.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton10 vBoton10, % btnPics["10.png"] ? "HBITMAP:*" btnPics["10.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-; Fila3
-Gui Add, Picture, +BackgroundTrans gBoton11 vBoton11, % btnPics["11.png"] ? "HBITMAP:*" btnPics["11.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton12 vBoton12, % btnPics["12.png"] ? "HBITMAP:*" btnPics["12.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton13 vBoton13, % btnPics["13.png"] ? "HBITMAP:*" btnPics["13.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton14 vBoton14, % btnPics["14.png"] ? "HBITMAP:*" btnPics["14.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
-Gui Add, Picture, +BackgroundTrans gBoton15 vBoton15, % btnPics["15.png"] ? "HBITMAP:*" btnPics["15.png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
+Loop, 15
+{
+    i   := A_Index
+    var := "Boton" i
+    src := btnPics[i ".png"] ? "HBITMAP:*" btnPics[i ".png"] : "HBITMAP:*" btnPics["button_placeholder.png"]
+    Gui, Add, Picture, +BackgroundTrans gOnButton v%var%, % src
+}
+
 ; Fondos Activaciones Botones
 Gui Add, Picture, vActivar1 Hidden x120 y40 w150 h150, % btnPics["FondoActivacion.png"] ? "HBITMAP:*" btnPics["FondoActivacion.png"] : ""
 Gui Add, Picture, vActivar2 Hidden x280 y40 w150 h150, % btnPics["FondoActivacion.png"] ? "HBITMAP:*" btnPics["FondoActivacion.png"] : ""
@@ -485,12 +330,13 @@ else if(conf.online)
 	GuiControl, , wifi_icon, % btnPics["wifi_icon_offline.png"] ? "HBITMAP:*" btnPics["wifi_icon_offline.png"] : ""
 }
 ; Fondo y secciones mover
-Gui Add, Picture, x0 y0 w1024 h600, % btnPics["background.png"] ? "HBITMAP:*" btnPics["background.png"] : ""
-Gui, Add, Text, x0 y0 w1024 h50 cWhite Center GMoverVentana vMoverVentanaUp, ; Mover Ventana de arriba
-Gui, Add, Text, x0 y570 w1024 h50 cWhite Center GMoverVentana vMoverVentanaDown, ; Mover Ventana de abajo
+Gui Font, s24, Bai Jamjuree SemiBold
+Gui, Add, Text, x0 y0 w1024 h50 +BackgroundTrans cWhite Center GMoverVentana vMoverVentanaUp, ; Mover Ventana de arriba (3.7.6+ Top Notifications)
+Gui, Add, Text, x0 y543 w1024 h59 +BackgroundTrans cWhite Center GMoverVentana vMoverVentanaDown, ; Mover Ventana de abajo (3.7.6+ Bottom Notifications)
+Gui Add, Picture, x0 y0 w1024 h600 vbackgroundImg, % btnPics["background.png"] ? "HBITMAP:*" btnPics["background.png"] : ""
 EstablecerPagina(0)
 Gui, SplashScreen:Destroy
-Gui Show, % "w1024 h600 x" conf.x_Inicial "y" conf.y_Inicial, Nova Macros Client
+Gui Show, % "w1024 h600 x" conf.x_Inicial "y" conf.y_Inicial, Nova Macros Client ; Do NOT change the name, it's used for notifications amongst other stuff
 if(conf.miniClient)
 {
 	conf.miniClient := 0
@@ -502,6 +348,9 @@ gosub, setReactiveService
 if(conf.lookForUpdates){
 	lookForUpdates(true)
 }
+
+global sender := new talk("Background")
+; END AUTOEXECUTE SECTION
 Return
 
 ; LABELS BOTONES Y FUNCIONES GENERALES
@@ -551,7 +400,7 @@ GuiContextMenu:
 	{
 		Menu ContextMenuGenerico, Show
 	}
-	; Antes el fondo permitía mostrar el botón de acciones, ahora hay un bottón arriba a la derecha para esto (más fácil para el modo táctil y más visual para el usuario nuevo)
+	; Background used to show the action context menu, now there is a top-right button for that (easier for touch mode and for newer users)
 	;~ else
 		;~ Menu ContextMenuGenerico, Show
 return
@@ -566,337 +415,6 @@ return
 
 GuiInfoBoton:
 	MsgBox,,Button ID, Clicked button Id is: %BotonActivo%
-return
-
-ScriptGenerator_RunFile:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\RunFile.ahk" %BotonActivo%
-return
-
-ScriptGenerator_RunCmd:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\RunCmd.ahk" %BotonActivo%
-return
-
-ScriptGenerator_SendText:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\SendTextBlock.ahk" %BotonActivo%
-return
-
-ScriptGenerator_Hotkey:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\HotkeyCreator.ahk" %BotonActivo%
-return
-
-ScriptGenerator_Multimedia_PlayPause:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_PlayPause.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_Multimedia_Stop:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Stop.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_Multimedia_Next:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Next.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_Multimedia_Previous:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Previous.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_Multimedia_MoreVolume:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_MoreVolume.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_Multimedia_LessVolume:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_LessVolume.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_Multimedia_Mute:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_Multimedia_Mute.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F13:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F13.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F14:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F14.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F15:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F15.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F16:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F16.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F17:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F17.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F18:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F18.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F19:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F19.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F20:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F20.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F21:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F21.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F22:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F22.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F23:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F23.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_FunctionKeys_F24:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_FunctionKeys_F24.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_WebBrowser_NextTab:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_NextTab.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_WebBrowser_PreviousTab:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_PreviousTab.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_WebBrowser_NewTab:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_NewTab.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_WebBrowser_NewWindow:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_NewWindow.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_WebBrowser_CloseTab:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_CloseTab.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_WebBrowser_RestoreTab:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_RestoreTab.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_WebBrowser_ChromePrivWindow:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_WebBrowser_ChromePrivWindow.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_CloseWindow:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_CloseWindow.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_Maximize:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Maximize.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_Minimize:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Minimize.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_ShowDesktop:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_ShowDesktop.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_NewExplorer:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_NewExplorer.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_NewFolder:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_NewFolder.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_QuickRename:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_QuickRename.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_LockPC:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_LockPC.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_Shutdown:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Shutdown.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_SystemInfo:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_SystemInfo.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_FullSystemInfo:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_FullSystemInfo.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_Cmd:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_Cmd.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_PowerShell:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_PowerShell.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_ScreenShot:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_ScreenShot.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_SnipImage:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_SnipImage.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_GamePanel:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_GamePanel.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_QuickActions_EmojiPanel:
-	if(ComprobarExistenciaBoton())
-		FileCopy, lib\script_generator\code_snippets\ScriptGenerator_QuickActions_EmojiPanel.ahk,%BotonActivo%.ahk,1
-return
-
-ScriptGenerator_OBS_HideShowSource:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBS_HideShowSource.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBS_SetScene:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBS_SetScene.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBS_Record:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBS_Record.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBS_StopRecord:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBS_StopRecord.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBS_PauseRecord:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBS_PauseRecord.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBS_ResumeRecord:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBS_ResumeRecord.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBS_MuteUnmuteSource:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBS_MuteUnmuteSource.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBS_ShowCurrentScene:
-	if(ComprobarExistenciaBoton())
-		FileCopy, % A_ScriptDir "\lib\script_generator\OBS_ShowCurrentScene.ahk", % A_ScriptDir "\" BotonActivo ".ahk", 1
-return
-
-ScriptGenerator_OBS_SoundPannel:
-	if(ComprobarExistenciaBoton()){
-		FileDelete, % "" BotonActivo ".ahk"
-		scriptContent :=
-		(LTrim
-		"#NoEnv
-		#SingleInstance, Force
-		#NoTrayIcon
-		SetWorkingDir " A_ScriptDir "\plugins\obs_sound_control
-		Run, " A_ScriptDir "\plugins\obs_sound_control\obs_sound_panel.ahk"
-		)
-		FileAppend, % scriptContent, % "" BotonActivo ".ahk"
-	}
-return
-
-ScriptGenerator_OBSBOT_Sleep:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_Sleep.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_Wake:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_Wake.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_SetZoom:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_SetZoom.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_StartRecording:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_StartRecording.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_StopRecording:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_StopRecording.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_TakePhoto:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_TakePhoto.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_ResetGimbal:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_ResetGimbal.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_SetFOV:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_SetFOV.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_Mirror:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_Mirror.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_TrackingMode:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_TrackingMode.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_AILock:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_AILock.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_AIMode:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_AIMode.ahk" %BotonActivo%
-return
-
-ScriptGenerator_OBSBOT_SetGimbalPossition:
-	Run, %A_ScriptDir%\lib\autohotkey.exe "lib\script_generator\OBSBOT_SetGimbalPossition.ahk" %BotonActivo%
 return
 
 NotImplemented:
@@ -1035,10 +553,14 @@ if conf.miniClient
 	GuiControl, MoveDraw, Activar15, x760 y400 w150 h150
 	GuiControl, MoveDraw, LeftPage, x0 y230 w130 h130
 	GuiControl, MoveDraw, RightPage, x910 y230 w130 h130
+	Gui Font, s24 cWhite, Bai Jamjuree SemiBold
+	GuiControl, Font, MoverVentanaUp
+	GuiControl, Font, MoverVentanaDown
 	GuiControl, MoveDraw, MoverVentanaUp, x0 y0 w1024 h50
-	GuiControl, MoveDraw, MoverVentanaDown, x0 y570 w1024 h50
+	GuiControl, MoveDraw, MoverVentanaDown, x0 y543 w1024 h59
 	GuiControl, MoveDraw, wifi_icon, x960 y536 w64 h64
 	GuiControl, MoveDraw, settings_icon, x960 y0 w64 h64
+	GuiControl, MoveDraw, backgroundImg, x0 y0 w1024 h600
 	Gui Show, w1024 h600, Nova Macros Client
 }
 else
@@ -1062,96 +584,61 @@ else
 	GuiControl, MoveDraw, Activar15, x278 y126 w59 h59
 	GuiControl, MoveDraw, LeftPage, x0 y75 w49 h49
 	GuiControl, MoveDraw, RightPage, x340 y75 w49 h49
-	GuiControl, MoveDraw, MoverVentanaUp, x-8 y0 w413 h23
-	GuiControl, MoveDraw, MoverVentanaDown, x0 y187 w401 h23
+	Gui Font, s12 cWhite, Bai Jamjuree SemiBold
+	GuiControl, Font, MoverVentanaUp
+	GuiControl, Font, MoverVentanaDown
+	GuiControl, MoveDraw, MoverVentanaUp, x-8 y-5 w413 h23
+	GuiControl, MoveDraw, MoverVentanaDown, x0 y175 w401 h23
 	GuiControl, MoveDraw, wifi_icon, x353 y168 w32 h32
 	GuiControl, MoveDraw, settings_icon, x353 y0 w32 h32
+	GuiControl, MoveDraw, backgroundImg, x0 y0 w385 h200
 	Gui, Show, w385 h200, Nova Macros Client
 }
 gosub, setWifiIcon ; Resets the wifi icon without loosing quality bug on resize
 DllCall("LockWindowUpdate", "UInt", 0)
 gosub, guardarConfig
 ; Refrescar Botones para no perder calidad de imagen por bug resize
-if(conf.miniClient)
-{
-	RefrescarBotonesMini()
-}
-else
-{
-	RefrescarBotones()
-}
-if(EnCarpeta)
-{
-	EstablecerPaginaCarpeta(CarpetaBoton, PaginaCarpeta)
-}
-else
-{
-	EstaBlecerPagina(NumeroPagina)
-}
+gosub, refreshButtonsAndPage
 Return
+
+refreshButtons:
+	if(conf.miniClient)
+	{
+		RefrescarBotonesMini()
+	}
+	else
+	{
+		RefrescarBotones()
+	}
+return
+
+refreshPage:
+	if(EnCarpeta)
+	{
+		EstablecerPaginaCarpeta(CarpetaBoton, PaginaCarpeta)
+	}
+	else
+	{
+		EstaBlecerPagina(NumeroPagina)
+	}
+return
+
+refreshButtonsAndPage:
+	gosub, refreshButtons
+	gosub, refreshPage
+return
 
 MoverVentana:
 PostMessage, 0xA1, 2,,, A 
 Return
 
-Boton1:
-PulsarBoton(1)
-return
-
-Boton2:
-PulsarBoton(2)
-return
-
-Boton3:
-PulsarBoton(3)
-return
-
-Boton4:
-PulsarBoton(4)
-return
-
-Boton5:
-PulsarBoton(5)
-return
-
-Boton6:
-PulsarBoton(6)
-return
-
-Boton7:
-PulsarBoton(7)
-return
-
-Boton8:
-PulsarBoton(8)
-return
-
-Boton9:
-PulsarBoton(9)
-return
-
-Boton10:
-PulsarBoton(10)
-return
-
-Boton11:
-PulsarBoton(11)
-return
-
-Boton12:
-PulsarBoton(12)
-return
-
-Boton13:
-PulsarBoton(13)
-return
-
-Boton14:
-PulsarBoton(14)
-return
-
-Boton15:
-PulsarBoton(15)
+OnButton:
+{
+    RegExMatch(A_GuiControl, "\d+$", idx)
+    if (idx = "")
+        return
+    PulsarBoton(idx)
+}
 return
 
 PulsarBoton(BotonAPulsar)
@@ -1262,6 +749,7 @@ PulsarBoton(BotonAPulsar)
 EstablecerPagina(NumeroPagina)
 {
 	global
+	EnCarpeta := 0
 	if(!conf.cargaProgresivaIconos)
 		DllCall("LockWindowUpdate", "UInt", windowHandler)
 	CarpetaBoton := ""
@@ -1280,6 +768,11 @@ EstablecerPagina(NumeroPagina)
 	RutaBoton13 := CarpetaBoton 15*NumeroPagina+13 ".png"
 	RutaBoton14 := CarpetaBoton 15*NumeroPagina+14 ".png"
 	RutaBoton15 := CarpetaBoton 15*NumeroPagina+15 ".png"
+	
+	if (NumeroPagina == 0)
+		GuiControl, Hide, LeftPage
+	else
+		GuiControl, Show, LeftPage
 	
 	if(conf.miniClient)
 	{
@@ -1313,7 +806,12 @@ EstablecerPaginaCarpeta(CarpetaBoton, PaginaCarpeta)
 	RutaBoton12 := CarpetaBoton 15*PaginaCarpeta+12 ".png"
 	RutaBoton13 := CarpetaBoton 15*PaginaCarpeta+13 ".png"
 	RutaBoton14 := CarpetaBoton 15*PaginaCarpeta+14 ".png"
-		
+	
+	if (PaginaCarpeta == 0)
+		GuiControl, Hide, LeftPage
+	else
+		GuiControl, Show, LeftPage
+	
 	if(conf.miniClient)
 	{
 		RefrescarBotonesMini(true)
@@ -1883,7 +1381,7 @@ SkinForm(Param1 = "Apply", DLL = "", SkinName = ""){
 GetOut:
 	SkinForm(0)
     ExitApp
-	
+
 
 ; NETWORKING MODULE
 EnviarTCP(txtSnd)
@@ -2043,52 +1541,100 @@ descomprimirResourcePack:
 	reload
 return
 
-URLToVar(URL)
-{
-    ComObjError(0)
-    WebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-    WebRequest.Open("GET", URL)
-    WebRequest.Send()
-    Return WebRequest.ResponseText()
+
+; WM_COPYDATA specific funtions
+setBackground:
+	try {
+		incomingBackgroundChange := ParseJson(incomingBackgroundChange)
+		imagePathOrName := incomingBackgroundChange.imagePathOrName
+		DllCall("LockWindowUpdate", "UInt", windowHandler)
+		Loop, 2 ; Bug? Blurry on first change
+		{
+			GuiControl, Text, backgroundImg, % btnPics[imagePathOrName] ? "HBITMAP:*" btnPics[imagePathOrName] : imagePathOrName
+			if conf.miniClient
+			{
+				GuiControl, MoveDraw, backgroundImg, x0 y0 w385 h200
+			}
+			else
+			{
+				GuiControl, MoveDraw, backgroundImg, x0 y0 w1024 h600
+			}
+		}
+		DllCall("LockWindowUpdate", "UInt", 0)
+	}
+return
+
+setButtonIconRemote:
+	try {
+		incomingButtonChange := ParseJson(incomingButtonChange)
+		setButtonIcon(incomingButtonChange.buttonId, incomingButtonChange.imagePathOrName)
+	}
+return
+
+setButtonIcon(buttonId, imagePathOrName) {
+	global
+	GuiControl, Text, Boton%buttonId%, % btnPics[imagePathOrName] ? "HBITMAP:*" btnPics[imagePathOrName] : imagePathOrName
+	if(conf.miniClient)
+		GuiControl, MoveDraw, Boton%buttonId%, w49 h49
+	else
+		GuiControl, MoveDraw, Boton%buttonId%, w130 h130
 }
 
-AHK_ICONCLICKCHECK()
-{
-	global AHK_ICONCLICKCOUNT
-	if  (AHK_ICONCLICKCOUNT = 1)		; LEFT CLK
-	{
-		;~ Menu, LeftClickMenu, Show
+; Notification examples at: plugins: notification_examples.ahk & backup_nova_macros.ahk
+showIncomingNotification:
+	try {
+		incomingNotification := ParseJson(incomingNotification)
+		if (incomingNotification.region == "top") {
+			setNotificationTop(incomingNotification.text, incomingNotification.duration)
+		} else if (incomingNotification.region == "bottom") {
+			setNotificationBottom(incomingNotification.text, incomingNotification.duration)
+		}
 	}
-	else if (AHK_ICONCLICKCOUNT = 2)	; LEFT DBCLK
-	{
-		gosub, ToggleHide
-	}
-	return 0
+return
+
+setNotificationTop(notificationText, notificationDuration) {
+	global MoverVentanaUp
+	GuiControl,, MoverVentanaUp, % notificationText
+	if (notificationDuration != 0) ; Indefinite duration
+		SetTimer, removeNotificationTop, % notificationDuration
 }
 
-AHK_ICONCLICKNOTIFY(wParam,lParam)
-{
-	global AHK_ICONCLICKCOUNT
-	if (lParam = 0x201)
-	{
-		AHK_ICONCLICKCOUNT := 1
-		SetTimer, AHK_ICONCLICKCHECK, -200
-	}
-	else if (lParam = 0x203)
-	{
-		AHK_ICONCLICKCOUNT := 2
-	}
-	else if (lParam = 0x205)			; RIGHT CLK
-	{
-		Menu, Tray, Show			; launch standard menu
-		;~ Menu, RightClickMenu, Show	; or a custom one
-	}
-	else if (lParam = 0x208)			; MIDDLE CLK
-	{
-		;~ Menu, MiddleClickMenu, Show
-	}
-	return 0
+setNotificationBottom(notificationText, notificationDuration) {
+	global MoverVentanaDown
+	GuiControl,, MoverVentanaDown, % notificationText
+	if (notificationDuration != 0) ; Indefinite duration
+		SetTimer, removeNotificationBottom, % notificationDuration
 }
+
+removeNotificationTop:
+	SetTimer, removeNotificationTop, Off
+	GuiControl,, MoverVentanaUp, % ""
+return
+
+removeNotificationBottom:
+	SetTimer, removeNotificationBottom, Off
+	GuiControl,, MoverVentanaDown, % ""
+return
+
+removeNotifications:
+	SetTimer, removeNotifications, Off
+	gosub, removeNotificationBottom
+	gosub, removeNotificationTop
+return
+
+remotePageChange:
+	try {
+		incomingPageChange := ParseJson(incomingPageChange)
+		if (incomingPageChange.isFolder) {
+			CarpetaBoton := incomingPageChange.folderName
+			global PaginaCarpeta := incomingPageChange.pageNumber
+			EstablecerPaginaCarpeta(CarpetaBoton, PaginaCarpeta)
+		} else {
+			NumeroPagina := incomingPageChange.pageNumber
+			EstablecerPagina(NumeroPagina)
+		}
+	}
+return
 
 precargaIconosLocalesEnRam:
 	; Precarga imágenes de botones en memoria (mucha más rápida la navegación) (qué majo soy, unos comentarios los pongo en inglés y otros en español, tremendo caraalpargata)
@@ -2150,7 +1696,7 @@ return
 
 setReactiveService:
 	if(conf.reactiveWindow){
-		SetTimer, setPageByActiveProgram, 333
+		SetTimer, setPageByActiveProgram, 500
 	}else{
 		SetTimer, setPageByActiveProgram, Off
 	}
@@ -2284,3 +1830,12 @@ loadConfig:
 	StringReplace, scriptEditorPath, scriptEditorPath, \, \\, All
 	conf.scriptEditorPath := scriptEditorPath
 return
+
+reloadPlugins:
+	for key, plugin in plugins
+	{
+		BuildMenusFromPlugin(plugin)
+	}
+return
+
+#Include plugins/plugin_list.ahk

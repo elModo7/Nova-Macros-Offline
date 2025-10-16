@@ -1,6 +1,6 @@
 ﻿lookForUpdates(silent := false){
 	global ClientVersionNumber
-	gitHubData := ParseJson(urlDownloadToVar("https://api.github.com/repos/elModo7/Nova-Macros-Offline/releases/latest"))
+	gitHubData := ParseJson(urlDownloadToVar("https://api.github.com/repos/elModo7/Nova-Macros/releases/latest"))
 	gitHubVersion := gitHubData.tag_name
 	versionDiff := VerCmp(gitHubVersion, ClientVersionNumber)
 	if(versionDiff == "-1" && !silent){
@@ -16,5 +16,5 @@
 }
 
 downloadLatestVersion(){
-	Run, https://github.com/elModo7/Nova-Macros-Offline/releases/latest
+	Run, https://github.com/elModo7/Nova-Macros/releases/latest
 }

@@ -1,13 +1,16 @@
-﻿#NoEnv
+﻿; Since using my new dll version instead of an Exe and being forced to 64bit
+; This script needs to run as 64bit ahk and is no longer compatible with uskin
+#NoEnv
 #SingleInstance Force
 SetBatchLines -1
 #NoTrayIcon
 global buttonName = %0% 
+#Include %A_WorkingDir%/lib/setAhk64self.ahk
 global buttonPath := buttonName ".ahk"
 SkinForm(Apply, A_ScriptDir . "\lib\them.dll", A_ScriptDir . "\lib\tm")
 OnExit, GetOut
 global zoomValue
-#Include <OBSBOTController>
+#Include %A_WorkingDir%/lib/OBSBOTController.ahk
 myCam := new OBSBOTController("127.0.0.1", 16284)
 
 Gui Font, s14, Bai Jamjuree Bold
@@ -62,6 +65,7 @@ Generate(speed, pan, pitch)
 "#NoEnv
 #SingleInstance Force
 #NoTrayIcon
+#Include <setAhk64self>
 #Include <OBSBOTController>
 #Include <nm_msg>
 SetBatchLines, -1

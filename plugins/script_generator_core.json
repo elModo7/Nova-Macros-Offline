@@ -1,0 +1,36 @@
+{
+  "plugin": "script_generator_core",
+  "priority": 100,
+  "version": 1,
+  "menus": [
+    {
+      "name": "scriptGenerator",
+      "items": [
+        {
+          "type": "command",
+          "label": "Run File",
+          "handler": "ScriptGenerator_RunFile",
+          "icon": { "file": "shell32.dll", "index": 25 }
+        },
+        {
+          "type": "command",
+          "label": "Run Cmd",
+          "handler": "ScriptGenerator_RunCmd",
+          "icon": ".\\resources\\img\\ico\\windows\\powershell.ico"
+        },
+        {
+          "type": "command",
+          "label": "Send Text",
+          "handler": "ScriptGenerator_SendText",
+          "icon": { "file": "shell32.dll", "index": 71 }
+        },
+        {
+          "type": "command",
+          "label": "Hotkey - Macro",
+          "handler": "ScriptGenerator_Hotkey",
+          "icon": { "file": "imageres.dll", "index": 174 }
+        }
+      ]
+    }
+  ]
+}

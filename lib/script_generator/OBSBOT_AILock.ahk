@@ -56,6 +56,7 @@ Generate(value)
 "#NoEnv
 #SingleInstance Force
 #NoTrayIcon
+#Include <setAhk64self>
 #Include <OBSBOTController>
 #Include <nm_msg>
 SetBatchLines, -1

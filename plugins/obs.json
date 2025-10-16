@@ -1,0 +1,25 @@
+{
+  "plugin": "obs",
+  "priority": 1000,
+  "version": 1,
+  "menus": [
+    {
+      "name": "OBSFunctions",
+      "icon_default": "resources\\img\\ico\\OBS.ico",
+      "items": [
+        { "type": "command", "label": "Set Scene", "handler": "ScriptGenerator_OBS_SetScene", "icon": "resources\\img\\ico\\OBS.ico" },
+        { "type": "command", "label": "Hide/Show Source", "handler": "ScriptGenerator_OBS_HideShowSource", "icon": "resources\\img\\ico\\OBS.ico" },
+        { "type": "command", "label": "Start Recording", "handler": "ScriptGenerator_OBS_Record", "icon": "resources\\img\\ico\\OBS.ico" },
+        { "type": "command", "label": "Stop Recording", "handler": "ScriptGenerator_OBS_StopRecord", "icon": "resources\\img\\ico\\OBS.ico" },
+        { "type": "command", "label": "Pause Recording", "handler": "ScriptGenerator_OBS_PauseRecord", "icon": "resources\\img\\ico\\OBS.ico" },
+        { "type": "command", "label": "Resume Recording", "handler": "ScriptGenerator_OBS_ResumeRecord", "icon": "resources\\img\\ico\\OBS.ico" },
+        { "type": "command", "label": "Mute/Unmute Source", "handler": "ScriptGenerator_OBS_MuteUnmuteSource", "icon": "resources\\img\\ico\\OBS.ico" },
+        { "type": "command", "label": "Show current Scene", "handler": "ScriptGenerator_OBS_ShowCurrentScene", "icon": "resources\\img\\ico\\OBS.ico" },
+        { "type": "command", "label": "Sound Pannel", "handler": "ScriptGenerator_OBS_SoundPannel", "icon": "resources\\img\\ico\\OBS.ico" }
+      ]
+    }
+  ],
+  "register_in": [
+    { "menu": "scriptGenerator", "label": "OBSFunctions", "submenu": "OBSFunctions", "icon": "resources\\img\\ico\\OBS.ico" }
+  ]
+}

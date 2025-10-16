@@ -1,0 +1,22 @@
+{
+  "plugin": "web_browser_commands",
+  "priority": 1000,
+  "version": 1,
+  "menus": [
+    {
+      "name": "WebBrowserCommands",
+      "items": [
+        { "type": "command", "label": "Next Tab", "handler": "ScriptGenerator_WebBrowser_NextTab", "icon": { "file": "shell32.dll", "index": 15 } },
+        { "type": "command", "label": "Previous Tab", "handler": "ScriptGenerator_WebBrowser_PreviousTab", "icon": { "file": "shell32.dll", "index": 15 } },
+        { "type": "command", "label": "New Tab", "handler": "ScriptGenerator_WebBrowser_NewTab", "icon": { "file": "shell32.dll", "index": 15 } },
+        { "type": "command", "label": "New Window", "handler": "ScriptGenerator_WebBrowser_NewWindow", "icon": { "file": "shell32.dll", "index": 15 } },
+        { "type": "command", "label": "Close Tab", "handler": "ScriptGenerator_WebBrowser_CloseTab", "icon": { "file": "shell32.dll", "index": 15 } },
+        { "type": "command", "label": "Restore Closed Tab", "handler": "ScriptGenerator_WebBrowser_RestoreTab", "icon": { "file": "shell32.dll", "index": 15 } },
+        { "type": "command", "label": "Chrome Private Window (NEW)", "handler": "ScriptGenerator_WebBrowser_ChromePrivWindow", "icon": { "file": "shell32.dll", "index": 15 } }
+      ]
+    }
+  ],
+  "register_in": [
+    { "menu": "scriptGenerator", "label": "Web Browser", "submenu": "WebBrowserCommands", "icon": { "file": "shell32.dll", "index": 221 } }
+  ]
+}

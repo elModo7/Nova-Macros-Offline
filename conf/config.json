@@ -4,14 +4,14 @@
 	"currentProfile":"localprofile",
 	"enviarAltTabAlPulsarBoton":1,
 	"extension":"ahk",
-	"folderButtons":[
-		"App",
-		"Folders",
-		"OBS"
-	],
-	"ip":"127.0.0.1",
+	"folderButtons":{
+		"1":"App",
+		"2":"Folders",
+		"14":"OBS"
+	},
+	"ip":"192.168.1.128",
 	"lookForUpdates":0,
-	"miniClient":1,
+	"miniClient":0,
 	"moverRatonAlPulsarBoton":0,
 	"online":0,
 	"pantalla_Mitad_X":960,
@@ -22,8 +22,8 @@
 	},
 	"reactiveWindow":0,
 	"resourcesPort":7779,
-	"scriptEditorPath":"C:\\Windows\\notepad.exe",
+	"scriptEditorPath":"C:\\Windows\\System32\\notepad.exe",
 	"siempreVisible":1,
-	"x_Inicial":0,
-	"y_Inicial":0
+	"x_Inicial":200,
+	"y_Inicial":200
 }

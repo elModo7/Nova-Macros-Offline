@@ -3,14 +3,14 @@
 #NoTrayIcon
 #SingleInstance, Force
 SetBatchLines, -1
-; #Include, <nm_msg>
+#Include, <nm_msg>
 DetectHiddenWindows, On
-/*IfWinNotExist, ahk_exe obs64.exe
+IfWinNotExist, ahk_exe obs64.exe
 {
 	nmMsg("OBS Not Detected!",2)
 	ExitApp
 }
-*/
+
 new LlamadaWS("ws://127.0.0.1:4455")
 return
 

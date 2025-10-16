@@ -23,3 +23,50 @@ urlDownloadToVar(url,raw:=0,userAgent:="",headers:=""){
 	} catch e
 		return % e.message
 }
+
+URLToVar(URL)
+{
+    ComObjError(0)
+    WebRequest := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    WebRequest.Open("GET", URL)
+    WebRequest.Send()
+    Return WebRequest.ResponseText()
+}
+
+AHK_ICONCLICKCHECK()
+{
+	global AHK_ICONCLICKCOUNT
+	if  (AHK_ICONCLICKCOUNT = 1)		; LEFT CLK
+	{
+		;~ Menu, LeftClickMenu, Show
+	}
+	else if (AHK_ICONCLICKCOUNT = 2)	; LEFT DBCLK
+	{
+		gosub, ToggleHide
+	}
+	return 0
+}
+
+AHK_ICONCLICKNOTIFY(wParam,lParam)
+{
+	global AHK_ICONCLICKCOUNT
+	if (lParam = 0x201)
+	{
+		AHK_ICONCLICKCOUNT := 1
+		SetTimer, AHK_ICONCLICKCHECK, -200
+	}
+	else if (lParam = 0x203)
+	{
+		AHK_ICONCLICKCOUNT := 2
+	}
+	else if (lParam = 0x205)			; RIGHT CLK
+	{
+		Menu, Tray, Show			; launch standard menu
+		;~ Menu, RightClickMenu, Show	; or a custom one
+	}
+	else if (lParam = 0x208)			; MIDDLE CLK
+	{
+		;~ Menu, MiddleClickMenu, Show
+	}
+	return 0
+}

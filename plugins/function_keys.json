@@ -1,0 +1,27 @@
+{
+  "plugin": "function_keys_f13_f24",
+  "priority": 1000,
+  "version": 1,
+  "menus": [
+    {
+      "name": "FunctionKeysMenu",
+      "items": [
+        { "type": "command", "label": "F13", "handler": "ScriptGenerator_FunctionKeys_F13", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F14", "handler": "ScriptGenerator_FunctionKeys_F14", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F15", "handler": "ScriptGenerator_FunctionKeys_F15", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F16", "handler": "ScriptGenerator_FunctionKeys_F16", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F17", "handler": "ScriptGenerator_FunctionKeys_F17", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F18", "handler": "ScriptGenerator_FunctionKeys_F18", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F19", "handler": "ScriptGenerator_FunctionKeys_F19", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F20", "handler": "ScriptGenerator_FunctionKeys_F20", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F21", "handler": "ScriptGenerator_FunctionKeys_F21", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F22", "handler": "ScriptGenerator_FunctionKeys_F22", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F23", "handler": "ScriptGenerator_FunctionKeys_F23", "icon": { "file": "imageres.dll", "index": 174 } },
+        { "type": "command", "label": "F24", "handler": "ScriptGenerator_FunctionKeys_F24", "icon": { "file": "imageres.dll", "index": 174 } }
+      ]
+    }
+  ],
+  "register_in": [
+    { "menu": "scriptGenerator", "label": "Hidden Function Keys (F13-F24)", "submenu": "FunctionKeysMenu", "icon": { "file": "imageres.dll", "index": 174 } }
+  ]
+}

@@ -1,0 +1,4 @@
+This library was donwloaded from this GitHub repo:
+https://github.com/CloakerSmoker/Spotify.ahk
+
+Consider giving it a star for this great work!
