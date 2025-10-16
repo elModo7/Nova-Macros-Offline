@@ -1,5 +1,5 @@
 
-# **Nova Macros (*A Stream Deck Clone*)**
+# **LibreDeck (*Free Open-Source Stream Deck*)**
 Built for **touchscreen** controls but also works as a normal desktop app for managing macros and shortcuts.  
 Specially designed for **streaming** but also for **power users, video editors and programmers**. 
 
@@ -14,16 +14,16 @@ Specially designed for **streaming** but also for **power users, video editors a
 
 **[AutoHotkey v1 (Heavily Recommended)](https://www.autohotkey.com/)**
 
-**[Latest Release](https://github.com/elModo7/Nova-Macros-Offline/releases/download/2.7b-Offline/Nova.Macros.Offline.Installer.zip)**
+**[Latest Release](https://github.com/elModo7/LibreDeck-Offline/releases/download/2.7b-Offline/Nova.Macros.Offline.Installer.zip)**
 
 ## **Installing from source:**
 
 Download and Install **32 Bit AutoHotkey v1** from [here](https://www.autohotkey.com/)
-Right click on ***"Nova Macros Client.ahk"***, click **Compile Script**.
-A file named ***"Nova Macros Client.exe"*** will apear, run that file. Done!
+Right click on ***"LibreDeck Client.ahk"***, click **Compile Script**.
+A file named ***"LibreDeck Client.exe"*** will apear, run that file. Done!
 
 > [!IMPORTANT]  
-> Must be compiled with AutoHotkey v1 Unicode 32 bits. If unsure, right click on ***"Nova Macros Client.ahk"*** and click **Compile Script (GUI)** make sure "Base File" is set to U32 AutoHotkey.
+> Must be compiled with AutoHotkey v1 Unicode 32 bits. If unsure, right click on ***"LibreDeck Client.ahk"*** and click **Compile Script (GUI)** make sure "Base File" is set to U32 AutoHotkey.
 
   
 # **Features:**
